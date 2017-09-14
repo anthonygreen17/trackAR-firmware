@@ -3,6 +3,10 @@
 All of the firmware things
 
 
+## Submodules ##
+
+Run `git submodule init` and `git submodule update` as soon as you clone!
+
 ## INSTALLATION ##
 
 Note: Mac/Linux only
