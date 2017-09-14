@@ -30,5 +30,11 @@ export ARDUINO_LIB_PATH=/Users/GreenBean/Documents/Arduino/libraries
 
 Basically, I've found that the easiest way to maintain a large project is to put the directories directly in your `$ARDUINO_LIB_PATH`, but it would be much nicer to have all of our code live in this repo, so that's what we're gonna do. Use the `update-project.bash` script to create symlinks in `$ARDUINO_LIB_PATH` that point to this repo. Wohoo.
 
+NOTE: Execute this script from the base of this git repo, plz:
+
+~~~
+$ ./scripts/update-project.bash
+~~~
+
 
 
