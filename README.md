@@ -7,7 +7,7 @@ All of the firmware things
 
 Note: Mac/Linux only
 
-First, download the Arduino IDE onto your machine. I have version 1.8, not sure how much that matters. Just get one of the latest.
+First, download the Arduino IDE onto your machine. Get the latest version -> https://www.arduino.cc/en/Main/Software
 
 Next, figure out where Arduino's default library directory is. Open your Arduino IDE, navigate to `Preferences`. You will see your sketchbook path there. For example, mine is:
 
@@ -15,7 +15,7 @@ Next, figure out where Arduino's default library directory is. Open your Arduino
 /Users/GreenBean/Documents/Arduino
 ~~~
 
-Append `/libraries` to that path and add the following line to the end of your `~/.bashrc` (make on if you dont have it...):
+Append `/libraries` to that path and add the following line to the end of your `~/.bashrc` (create one if you dont have it...):
 
 ~~~
 export ARDUINO_LIB_PATH=$YOUR_PATH_FROM_ABOVE/libraries
@@ -35,6 +35,9 @@ NOTE: Execute this script from the base of this git repo, plz:
 ~~~
 $ ./scripts/update-project.bash
 ~~~
+
+NOTE: depending on where you installed this, you may run into issues with permissions. If that happens, prepend
+`sudo` to the front of the command.
 
 
 
