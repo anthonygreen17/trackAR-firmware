@@ -2,6 +2,9 @@
 
 All of the firmware things
 
+## Examples ##
+If you develop a feature, put a test .ino script in the examples directory so others can easily test your feature, build off of it, etc.
+
 
 ## Submodules ##
 
