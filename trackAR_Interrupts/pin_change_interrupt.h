@@ -16,7 +16,7 @@ extern volatile bool ISR_PIN_STATE;
  * Configure the interrupt and associated GPIO. Don't do anything to global 
  * interrupts - that's the caller's responsibility.
  */
-void setupPinChangeInterrupt();
+void setupPinChangeInterrupt(bool rising);
 
 
 /**

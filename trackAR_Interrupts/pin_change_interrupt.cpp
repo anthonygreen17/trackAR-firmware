@@ -15,7 +15,7 @@ void disablePinChangeInterrupt()
   detachInterrupt(digitalPinToInterrupt(ISR_PIN));
 }
 
-void setupPinChangeInterrupt()
+void setupPinChangeInterrupt(bool rising)
 {
 	if (!configured)
 	{
@@ -23,7 +23,7 @@ void setupPinChangeInterrupt()
 		configured = true;
 	}
   attachInterrupt(
-    digitalPinToInterrupt(ISR_PIN), pinChangeISR, RISING
+    digitalPinToInterrupt(ISR_PIN), pinChangeISR, rising ? RISING : FALLING
    );
 }
 
