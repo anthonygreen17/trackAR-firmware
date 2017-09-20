@@ -45,7 +45,9 @@ NOTE: depending on where you installed this, you may run into issues with permis
 
 ## CONNECTING TO ATMega2560 VIA SERIAL IN ARDUINO IDE ##
 
-Under the tools subheader in the Arduino IDE ensure the following are selected and the ATMega2560 is plugged into the programmer which is connected to your computer:
+Ensure that you have installed the following driver on your computer to enable communication with the CP2102 programmer: https://www.silabs.com/products/development-tools/software/usb-to-uart-bridge-vcp-drivers
+
+Under the tools subheader in the Arduino IDE ensure the following are selected and the ATMega2560 is plugged into the CP2102 which is connected to your computer:
 
 Board - Arduino/Genuino Mega or Mega 2560
 Processor - ATMega2560 (Mega 2560)
