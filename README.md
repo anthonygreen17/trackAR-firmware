@@ -43,5 +43,14 @@ $ ./scripts/update-project.bash
 NOTE: depending on where you installed this, you may run into issues with permissions. If that happens, prepend
 `sudo` to the front of the command.
 
+## CONNECTING TO ATMega2560 VIA SERIAL IN ARDUINO IDE ##
+
+Under the tools subheader in the Arduino IDE ensure the following are selected and the ATMega2560 is plugged into the programmer which is connected to your computer:
+
+Board - Arduino/Genuino Mega or Mega 2560
+Processor - ATMega2560 (Mega 2560)
+Port - /dev/c.SLAB_USBtoUART
+Programmer - USBasp
+
 
 
