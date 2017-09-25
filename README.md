@@ -16,21 +16,24 @@ Note: Mac/Linux only
 
 First, download the Arduino IDE onto your machine. Get the latest version -> https://www.arduino.cc/en/Main/Software
 
-Next, figure out where Arduino's default library directory is. Open your Arduino IDE, navigate to `Preferences`. You will see your sketchbook path there. For example, mine is:
+Next, figure out where Arduino's default library directory is. Mine is:
 
 ~~~
-/Users/GreenBean/Documents/Arduino
+/Users/GreenBean/Downloads/Arduino.app/Contents/Java/hardware/arduino/avr/libraries
 ~~~
 
-Append `/libraries` to that path and add the following line to the end of your `~/.bashrc` (create one if you dont have it...):
+Run the following command to find the base directory under which all this stuff is installed (only tested on mac, may be different for Linux)
 
 ~~~
-export ARDUINO_LIB_PATH=$YOUR_PATH_FROM_ABOVE/libraries
+find ~ -type d -name Arduino.app
 ~~~
+For me, that returns `/Users/GreenBean/Downloads/Arduino.app`. Whatever your path is, append "Contents/Java/hardware/arduino/avr/libraries" to it.
 
-For me:
+Add the following line to the end of your `~/.bashrc` (create one if you dont have it...):
+
+For me (replace with your path):
 ~~~
-export ARDUINO_LIB_PATH=/Users/GreenBean/Documents/Arduino/libraries
+export ARDUINO_LIB_PATH=/Users/GreenBean/Downloads/Arduino.app/Contents/Java/hardware/arduino/avr/libraries
 ~~~
 
 ## CONFIGURATION ##
