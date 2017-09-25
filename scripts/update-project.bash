@@ -9,7 +9,7 @@ function logError() {
 LowPowerLib=Low-Power
 
 # these are the directories within the trackAR-firmware repo that we'd like to use in Arduino IDE compilation
-declare -a LIB_DIRS=( $LowPowerLib libs/trackAR_Interrupts Adafruit_BluefruitLE_nRF51)
+declare -a LIB_DIRS=( $LowPowerLib libs/trackAR_Interrupts Adafruit_BluefruitLE_nRF51 libs/bluetooth)
 
 if [ ! -d $LowPowerLib ]; then
 	logError "Run this from the base of the trackAR-firmware repo, please and thank u"
