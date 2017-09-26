@@ -32,6 +32,26 @@ extern Adafruit_BluefruitLE_UART bt_module;
 // set to true if you want the bluefruit to echo commands given
 #define ECHO_COMMANDS            false
 
+
+/**
+ * Do any necessary initialization steps here. For now, this just sets up
+ * callbacks to be executed on connect/disconnect with a BLE device.
+ *
+ * NOTE -> This will only work if you loop, calling bt->update(). 
+ */
+void initializeBtModule( 
+  Adafruit_BLE *bt, void (*onConnect)(void) = NULL, void (*onDisconnect)(void) = NULL 
+);
+
+/**
+ * Send the buffer to the BT module. Return true if the module returns "OK", and return
+ * false otherwise.
+ */
+bool sendToBtModule(Adafruit_BLE *bt, const char* buf);
+
+// dont allow the BT module to connect to any other components
+bool disableBtConnections(Adafruit_BLE *bt);
+
 #endif  //BLE_FRIEND_H_
 
 

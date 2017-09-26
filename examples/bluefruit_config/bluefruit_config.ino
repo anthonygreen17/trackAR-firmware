@@ -10,6 +10,17 @@ void error(const __FlashStringHelper*err) {
   while (1);
 }
 
+// callback to execute when we establish connection to a bluetooth device
+void onBluetoothDeviceConnect()
+{
+  Serial.println("Just connected to a device");
+}
+
+void onBluetoothDeviceDisconnect()
+{
+  Serial.println("Just disconnected from a device :(");
+}
+
 void setup(void)
 {
   while (!Serial);  // required for Flora & Micro
@@ -20,7 +31,7 @@ void setup(void)
   Serial.println(F("---------------------------------------"));
 
   /* Initialise the module */
-  Serial.print(F("Initialising the Bluefruit LE module: "));
+  Serial.print(F ("Initialising the Bluefruit LE module: ") );
 
   if ( !bt_module.begin(VERBOSE_MODE) )
   {
@@ -43,27 +54,13 @@ void setup(void)
   Serial.println("Requesting Bluefruit info:");
   /* Print Bluefruit information */
   bt_module.info();
-
-  Serial.println(F("Please use Adafruit Bluefruit LE app to connect in UART mode"));
-  Serial.println(F("Then Enter characters to send to Bluefruit"));
-  Serial.println();
-
   bt_module.verbose(false);  // debug info is a little annoying after this point!
 
   /* Wait for connection */
   while (! bt_module.isConnected()) {
       delay(500);
   }
-
-//  // LED Activity command is only supported from 0.6.6
-//  if ( bt_module.isVersionAtLeast("0.6.6") )
-//  {
-//    // Change Mode LED Activity
-//    Serial.println(F("******************************"));
-//    Serial.println(F("Change LED activity to " MODE_LED_BEHAVIOUR));
-//    bt_module.sendCommandCheckOK(F("AT+HWModeLED=" MODE_LED_BEHAVIOUR));
-//    Serial.println(F("******************************"));
-//  }
+  onBluetoothDeviceConnect();
 }
 
 /**************************************************************************/
@@ -78,20 +75,24 @@ void loop(void)
 
   if ( getUserInput(inputs, BUFSIZE) )
   {
-    // Send characters to Bluefruit
+    // Send characters to Bluefruit! 
+    
+    // print on serial monitor...
     Serial.print("[Send] ");
     Serial.println(inputs);
 
-    bt_module.print("AT+BLEUARTTX=");
-    bt_module.println(inputs);
-
-    // check response stastus
-    if (! bt_module.waitForOK() ) {
-      Serial.println(F("Failed to send?"));
-    }
+    // ... and send over UART to the Bluefruit
+    sendToBtModule(&bt_module, inputs);
   }
 
-  // Check for incoming characters from Bluefruit
+  checkForIncomingData();
+}
+
+/**
+ * Check for incoming data from the bluetooth module.
+ */
+void checkForIncomingData()
+{
   bt_module.println("AT+BLEUARTRX");
   bt_module.readline();
   if (strcmp(bt_module.buffer, "OK") == 0) {
@@ -100,7 +101,7 @@ void loop(void)
   }
   // Some data was found, its in the buffer
   Serial.print(F("[Recv] ")); Serial.println(bt_module.buffer);
-  bt_module.waitForOK();
+  bt_module.waitForOK(); 
 }
 
 /**************************************************************************/
