@@ -23,10 +23,14 @@ extern Adafruit_BluefruitLE_UART bt_module;
 #define BLE_FRIEND_MODE_PIN       12
 
 // max bufsize for incoming data to the serial port
-#define INPUT_BUFSIZE            128
+#define BUFSIZE            128
 
 // enables debug output if set to true
-#define VERBOSE_MODE            true
+#define VERBOSE_MODE             true
+#define FACTORY_RESET_ON_STARTUP false
+
+// set to true if you want the bluefruit to echo commands given
+#define ECHO_COMMANDS            false
 
 #endif  //BLE_FRIEND_H_
 
