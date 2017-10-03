@@ -15,7 +15,8 @@
  *  Pin12     -> MOD
  *  GND       -> CTS
  *
- *  At this point, it seems like RTS is unneeded and can also be pulled to ground.
+ *  At this point, it seems like RTS is unneeded and can also be pulled to ground (it wasnt pulled to ground
+ *  when testing this, but it probably should be.)
  */
 extern Adafruit_BluefruitLE_UART bt_module;
 

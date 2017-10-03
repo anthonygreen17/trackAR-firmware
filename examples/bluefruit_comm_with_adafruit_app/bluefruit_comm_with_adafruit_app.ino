@@ -23,8 +23,8 @@ void onBluetoothDeviceDisconnect()
 
 void setup(void)
 {
-  while (!Serial);  // required for Flora & Micro
-  delay(500);
+  while (!Serial);  // just to be sure :)
+  delay(100);
 
   Serial.begin(115200);
   Serial.println(F("Adafruit Bluefruit Command Mode Example"));
@@ -88,21 +88,21 @@ void loop(void)
   checkForIncomingData();
 }
 
-/**
- * Check for incoming data from the bluetooth module.
- */
-void checkForIncomingData()
-{
-  bt_module.println("AT+BLEUARTRX");
-  bt_module.readline();
-  if (strcmp(bt_module.buffer, "OK") == 0) {
-    // no data
-    return;
-  }
-  // Some data was found, its in the buffer
-  Serial.print(F("[Recv] ")); Serial.println(bt_module.buffer);
-  bt_module.waitForOK(); 
-}
+// /**
+//  * Check for incoming data from the bluetooth module.
+//  */
+// void checkForIncomingData()
+// {
+//   bt_module.println("AT+BLEUARTRX");
+//   bt_module.readline();
+//   if (strcmp(bt_module.buffer, "OK") == 0) {
+//     // no data
+//     return;
+//   }
+//   // Some data was found, its in the buffer
+//   Serial.print(F("[Recv] ")); Serial.println(bt_module.buffer);
+//   bt_module.waitForOK(); 
+// }
 
 /**************************************************************************/
 /*!
