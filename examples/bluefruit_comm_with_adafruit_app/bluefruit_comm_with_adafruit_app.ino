@@ -39,7 +39,7 @@ void setup(void)
   }
   Serial.println( F("OK!") );
 
-  if ( FACTORY_RESET_ON_STARTUP)
+  if ( BLE_FACTORY_RESET_ON_STARTUP)
   {
     /* Perform a factory reset to make sure everything is in a known state */
     Serial.println(F("Performing a factory reset: "));

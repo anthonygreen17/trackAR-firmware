@@ -27,11 +27,14 @@ extern Adafruit_BluefruitLE_UART bt_module;
 #define BUFSIZE            128
 
 // enables debug output if set to true
-#define VERBOSE_MODE             true
-#define FACTORY_RESET_ON_STARTUP false
+#define VERBOSE_MODE                 false
+#define BLE_FACTORY_RESET_ON_STARTUP false
 
 // set to true if you want the bluefruit to echo commands given
 #define ECHO_COMMANDS            false
+
+// the max time that the bluetooth module will wait on Receiver start-up until we turn off bluetooth
+#define BT_POWERUP_SEARCH_PERIOD_SEC 30 
 
 
 /**
