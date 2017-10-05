@@ -4,13 +4,16 @@
 
 Adafruit_BluefruitLE_UART bt_module(BLE_FRIEND_HW_SERIAL, BLE_FRIEND_MODE_PIN);
 
+namespace bluetooth
+{
+
 // A small helper for printing errors
 static void bluetoothError(const __FlashStringHelper*err) {
   Serial.println(err);
   while (1);
 }
 
-void initializeBtModule(
+void initialize(
 	Adafruit_BLE *bt,
 	void (*onConnect)(void),
 	void (*onDisconnect)(void),
@@ -42,16 +45,18 @@ void initializeBtModule(
 		bt->setBleUartRxCallback(onRxBufReceive);
 }
 
-bool sendToBtModule(Adafruit_BLE *bt, const char* buf)
+bool send(Adafruit_BLE *bt, const char* buf)
 {
 	bt->print("AT+BLEUARTTX=");
 	bt->println(buf);
 	return bt->waitForOK();
 }
 
-bool disableBtConnections(Adafruit_BLE *bt)
+bool disableConnections(Adafruit_BLE *bt)
 {
 	bt->println("AT+GAPCONNECTABLE=0");
 	return bt->waitForOK();
 }
+
+} // bluetooth
 
