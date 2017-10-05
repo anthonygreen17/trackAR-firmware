@@ -27,7 +27,7 @@ unsigned int btWritePeriod = 1000;  // milliseconds
 
 void setup() {
 
-	initializeBtModule();
+	initializeBtModule(&bt_module);
 
 }
 
@@ -35,7 +35,7 @@ void loop() {
   // put your main code here, to run repeatedly:
 	now = millis();
 
-  if (bt_module.connected())
+  if (bt_module.isConnected())
   {
   	if (now - lastBtWriteTime > btWritePeriod)
   	{

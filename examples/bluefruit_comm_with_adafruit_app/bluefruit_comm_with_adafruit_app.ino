@@ -5,7 +5,7 @@
 #include "Adafruit_BluefruitLE_UART.h"
 
 // A small helper for printing errors
-void error(const __FlashStringHelper*err) {
+void bluetoothError(const __FlashStringHelper*err) {
   Serial.println(err);
   while (1);
 }

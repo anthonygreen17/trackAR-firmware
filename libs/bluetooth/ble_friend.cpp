@@ -4,13 +4,19 @@
 
 Adafruit_BluefruitLE_UART bt_module(BLE_FRIEND_HW_SERIAL, BLE_FRIEND_MODE_PIN);
 
+// A small helper for printing errors
+static void bluetoothError(const __FlashStringHelper*err) {
+  Serial.println(err);
+  while (1);
+}
+
 void initializeBtModule(Adafruit_BLE *bt, void (*onConnect)(void), void (*onDisconnect)(void) )
 {
 	while (!BLE_FRIEND_HW_SERIAL);  // just to be sure :)
   delay(100);
   if ( !bt_module.begin(VERBOSE_MODE) )
   {
-    error(F("Failed to initialize bluetooth, make sure it's in CoMmanD mode & check wiring?"));
+    bluetoothError(F("Failed to initialize bluetooth, make sure it's in CoMmanD mode & check wiring?"));
   }
   UserSerial.println( F("Bluetooth initialized!") );
 
@@ -19,7 +25,7 @@ void initializeBtModule(Adafruit_BLE *bt, void (*onConnect)(void), void (*onDisc
     /* Perform a factory reset to make sure everything is in a known state */
     UserSerial.println(F("Performing a factory reset: "));
     if ( ! bt_module.factoryReset() ){
-      error(F("Couldn't factory reset"));
+      bluetoothError(F("Couldn't factory reset"));
     }
   }
 
