@@ -37,7 +37,7 @@ Add the following line to the end of your `~/.bashrc` (create one if you dont ha
 
 For me (replace with your path):
 ~~~
-export ARDUINO_LIB_PATH=/Users/GreenBean/Downloads/Arduino.app/Contents/Java/hardware/arduino/avr/libraries
+export ARDUINO_USER_LIB_PATH=/Users/GreenBean/Downloads/Arduino.app/Contents/Java/hardware/arduino/avr/libraries
 ~~~
 
 ## CONFIGURATION ##
