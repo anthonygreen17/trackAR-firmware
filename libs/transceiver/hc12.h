@@ -2,14 +2,13 @@
 #define HC_12_H_
 #include <Arduino.h>
 
-
 #define HC12_SERIAL Serial2
 
 namespace hc12
 {
 	// constexpr HardwareSerial& serial  = Serial2;
 	constexpr unsigned int BAUD        = 9600;
-	constexpr unsigned int MAX_MSG_LEN = 100;
+	constexpr unsigned int MAX_MSG_LEN = 255;
 
 	/**
 	 * Send this over bluetooth if we connect and havent received any transceiver data yet.

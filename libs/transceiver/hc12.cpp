@@ -48,7 +48,7 @@ namespace hc12
 	{
 		while (HC12_SERIAL.available() > 0)
 		{
-			buf[bufWriteIndex] = HC12_SERIAL.read();
+			buf[bufWriteIndex++] = HC12_SERIAL.read();
 
 			/**
 			 * Keep track of state with regards to receiving the end of the message.
@@ -78,8 +78,6 @@ namespace hc12
 					firstDelimReceived = false;
 				}
 			}
-
-			bufWriteIndex = bufWriteIndex + 1;
 		}
 		return false;
 	}
