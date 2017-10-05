@@ -34,6 +34,16 @@ namespace hc12
 		strcpy(lastRxMsg, noPosReceivedMsg);
 	}
 
+	void send(const char* msg)
+	{
+		char withDelim[strlen(msg) + strlen(msgDelim)];
+		strcat(withDelim, msg);
+		strcat(withDelim, msgDelim);
+
+		// DONT USER PRINTLN - that will add an extra newline
+		HC12_SERIAL.print(withDelim);
+	}
+
 	bool processBytes()
 	{
 		while (HC12_SERIAL.available() > 0)

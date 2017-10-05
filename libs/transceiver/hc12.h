@@ -46,6 +46,11 @@ namespace hc12
 	 */
 	bool processBytes();
 
+	/**
+	 * Send the message, adding the delimiting characters first.
+	 */
+	void send(const char* msg);
+
 }
 
 
