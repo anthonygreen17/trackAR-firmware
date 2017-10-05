@@ -16,6 +16,10 @@ Note: Mac/Linux only
 
 First, download the Arduino IDE onto your machine. Get the latest version -> https://www.arduino.cc/en/Main/Software
 
+### Arduino-Makefile Setup (Optional) ###
+
+Clone the repo: https://github.com/sudar/Arduino-Makefile
+
 Next, figure out where Arduino's default library directory is. Mine is:
 
 ~~~
