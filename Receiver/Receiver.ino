@@ -25,6 +25,8 @@
 unsigned long lastBtWriteTime = 0, now = 0;
 unsigned int btWritePeriod = 1000;  // milliseconds
 
+
+
 void setup() {
 
 	initializeBtModule(&bt_module);

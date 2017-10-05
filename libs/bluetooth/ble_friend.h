@@ -44,7 +44,8 @@ extern Adafruit_BluefruitLE_UART bt_module;
  * NOTE -> This will only work if you loop, calling bt->update(). 
  */
 void initializeBtModule( 
-  Adafruit_BLE *bt, void (*onConnect)(void) = NULL, void (*onDisconnect)(void) = NULL 
+  Adafruit_BLE *bt, void (*onConnect)(void) = NULL, void (*onDisconnect)(void) = NULL,
+  void (*onRxBufReceive)(char*, uint16_t) = NULL
 );
 
 /**

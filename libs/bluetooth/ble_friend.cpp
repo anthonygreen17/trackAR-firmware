@@ -10,7 +10,11 @@ static void bluetoothError(const __FlashStringHelper*err) {
   while (1);
 }
 
-void initializeBtModule(Adafruit_BLE *bt, void (*onConnect)(void), void (*onDisconnect)(void) )
+void initializeBtModule(
+	Adafruit_BLE *bt,
+	void (*onConnect)(void),
+	void (*onDisconnect)(void),
+	void (*onRxBufReceive)(char*, uint16_t))
 {
 	while (!BLE_FRIEND_HW_SERIAL);  // just to be sure :)
   delay(100);
@@ -34,6 +38,8 @@ void initializeBtModule(Adafruit_BLE *bt, void (*onConnect)(void), void (*onDisc
 		bt->setConnectCallback(onConnect);
 	if (onDisconnect != NULL)
 		bt->setDisconnectCallback(onDisconnect);
+	if (onRxBufReceive != NULL)
+		bt->setBleUartRxCallback(onRxBufReceive);
 }
 
 bool sendToBtModule(Adafruit_BLE *bt, const char* buf)
