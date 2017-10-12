@@ -21,6 +21,7 @@
 #include "Adafruit_BluefruitLE_UART.h"
 #include "ble_friend.h"
 #include "general_config.h"
+#include "hc12.h"
 
 unsigned long lastBtWriteTime = 0, now = 0;
 unsigned int btWritePeriod = 1000;  // milliseconds

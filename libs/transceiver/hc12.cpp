@@ -62,10 +62,7 @@ namespace hc12
 
 	void send(const char* msg)
 	{
-		char msgWithDelim[strlen(msg) + strlen(msgDelim)];
-		strcat(msgWithDelim, msg);
-		strcat(msgWithDelim, msgDelim);
-		send((uint8_t *)msgWithDelim, strlen(msgWithDelim));
+		send((uint8_t *)msg, strlen(msg));
 	}
 
 	void send(uint8_t *data, unsigned int length)
