@@ -8,7 +8,7 @@ namespace hc12
 {
 	// constexpr HardwareSerial& serial  = Serial2;
 	constexpr unsigned int BAUD        = 9600;
-	constexpr unsigned int MAX_MSG_LEN = 255;
+	constexpr unsigned int MAX_MSG_LEN = 512;
 
 	/**
 	 * Send this over bluetooth if we connect and havent received any transceiver data yet.
@@ -20,17 +20,6 @@ namespace hc12
 	 */
 	extern volatile char lastRxMsg[MAX_MSG_LEN];
 	extern volatile unsigned int lastRxMsgLength;
-	extern volatile bool newMsgReceived;
-
-	/**
-	 * Each received message is expected to be delimited by this character sequence.
-	 */
-	constexpr const char* msgDelim = "\r\n";
-
-	/**
-	 * If true, lastRxMsg will contain the entirety of the received message, without the delimiting characters.
-	 */
-	constexpr const bool trimDelims = true;
 
 	/**
 	 * Carry out any necessary configuration tasks.
@@ -50,9 +39,6 @@ namespace hc12
 	 */
 	void send(const char* msg);
 	void send(uint8_t* data, unsigned int length);
-
 }
-
-
 
 #endif // HC_12_H_

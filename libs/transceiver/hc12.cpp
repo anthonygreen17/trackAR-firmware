@@ -9,8 +9,6 @@ extern "C" {
 namespace hc12
 {
 	volatile char lastRxMsg[MAX_MSG_LEN] = "\0";
-	volatile bool newMsgReceived = false;
-	volatile unsigned int lastRxMsgLength = 0;
 
 	/**
 	 * Hold data in here until we receive a full message, then copy it over to the lastRxMsg buffer.
@@ -20,6 +18,11 @@ namespace hc12
 	static volatile bool firstDelimReceived = false;
 
 	static const int PACKET_HANDLER = 0;
+
+	// various private functions
+	static void sendPacket(uint8_t *data, unsigned int length);
+	static void processPacket(uint8_t *data, unsigned int length);
+	static void copyMsgFromBuf();
 
 	/**
 	 * This will get called after the packet interface properly packages a data buffer for us.
@@ -40,18 +43,10 @@ namespace hc12
 		UserSerial.println("Received message from Beacon:");
 		UserSerial.write(data, length);
 		UserSerial.print("\n");
-	}
 
-	/**
-	 * Copy the received message over from our internal buffer to lastRxMsg. May or may not discard the delimiting
-	 * chars.
-	 */
-	static void copyMsgFromBuf()
-	{
-		// leave space for null terminating char
-		int bytesToCopy = trimDelims ? bufWriteIndex + 1 - strlen(msgDelim) : bufWriteIndex + 1;
-		memcpy((void*)lastRxMsg, buf, bytesToCopy);
-		lastRxMsg[bytesToCopy] = '\0';
+		// copy the received payload into lastRxMsg
+		memcpy((void*)lastRxMsg, data, length);
+		lastRxMsg[length] = '\0';
 	}
 
 	void initialize()
