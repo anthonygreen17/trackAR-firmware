@@ -2,7 +2,7 @@
 #define HC_12_H_
 #include <Arduino.h>
 
-#define HC12_SERIAL Serial2
+#define HC12_SERIAL Serial1
 
 namespace hc12
 {
