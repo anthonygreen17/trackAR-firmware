@@ -1,5 +1,5 @@
 # transceiver #
 
-### IMPORTANT ###
+## Packet Interface ##
 
-Rx for the transceiver does NOT use a ring buffer...in other words, things will break if we receive a message thats larger than the max size defined in `hc12.h`. That should be fine for now but we may need to revisit later.
+The transceiver will send and receive all data through the packet interface, so go take a look at the `packet` library to get a feel for how that's working (although this code is probably documented thoroughly enough to understand it). This ensures the integrity of our data with CRC's.
