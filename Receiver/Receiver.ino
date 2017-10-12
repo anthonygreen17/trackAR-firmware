@@ -21,25 +21,24 @@
 #include "Adafruit_BluefruitLE_UART.h"
 #include "ble_friend.h"
 #include "general_config.h"
-#include "hc12.h"
 
 unsigned long lastBtWriteTime = 0, now = 0;
 unsigned int btWritePeriod = 1000;  // milliseconds
 
-void setup() {
+void setup()
+{
 	bluetooth::initialize(&bt_module);
-  hc12::initialize();
 }
 
-void loop() {
+void loop()
+{
 	now = millis();
-	hc12::processBytes();
 
   if (bt_module.isConnected())
   {
   	if (now - lastBtWriteTime > btWritePeriod)
   	{
-	  	bluetooth::send(&bt_module, (const char*)hc12::lastRxMsg);
+	  	bluetooth::send(&bt_module, "Hello there\n");
 	  	lastBtWriteTime = millis();
 	  }
   }

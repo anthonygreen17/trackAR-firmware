@@ -38,17 +38,18 @@ namespace hc12
 	void initialize();
 
 	/**
-	 * Process all characters received from the HC12. Return true if a new message was received as the result of this
-	 * function call, and return false otherwise.
-	 *
-	 * NOTE: will return if a complete message is detected.
+	 * Process all characters in the RX buffer, repeatedly calling packet_process_byte() on each byte. The packet
+	 * interface will call the "rx_func" passed to packet_init() after a full message is received.
 	 */
-	bool processBytes();
+	void processBytes();
 
 	/**
-	 * Send the message, adding the delimiting characters first.
+	 * Send the message, adding the delimiting characters first. This ends up calling packet_send_packet(), which
+	 * wraps the data in headers/footers/checksum, and sends it through the function passed as "send_func" in
+	 * packet_init().
 	 */
 	void send(const char* msg);
+	void send(uint8_t* data, unsigned int length);
 
 }
 
