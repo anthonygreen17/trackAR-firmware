@@ -1,0 +1,44 @@
+#ifndef HC_12_H_
+#define HC_12_H_
+#include <Arduino.h>
+
+#define HC12_SERIAL Serial2
+
+namespace hc12
+{
+	// constexpr HardwareSerial& serial  = Serial2;
+	constexpr unsigned int BAUD        = 9600;
+	constexpr unsigned int MAX_MSG_LEN = 512;
+
+	/**
+	 * Send this over bluetooth if we connect and havent received any transceiver data yet.
+	 */
+	constexpr const char* noPosReceivedMsg = "NOPOS";
+
+	/**
+	 * Statically allocate a buffer to hold the last received message.
+	 */
+	extern volatile char lastRxMsg[MAX_MSG_LEN];
+	extern volatile unsigned int lastRxMsgLength;
+
+	/**
+	 * Carry out any necessary configuration tasks.
+	 */
+	void initialize();
+
+	/**
+	 * Process all characters in the RX buffer, repeatedly calling packet_process_byte() on each byte. The packet
+	 * interface will call the "rx_func" passed to packet_init() after a full message is received.
+	 */
+	void processBytes();
+
+	/**
+	 * Send the message, adding the delimiting characters first. This ends up calling packet_send_packet(), which
+	 * wraps the data in headers/footers/checksum, and sends it through the function passed as "send_func" in
+	 * packet_init().
+	 */
+	void send(const char* msg);
+	void send(uint8_t* data, unsigned int length);
+}
+
+#endif // HC_12_H_

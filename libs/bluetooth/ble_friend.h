@@ -43,7 +43,11 @@ extern Adafruit_BluefruitLE_UART bt_module;
  *
  * NOTE -> This will only work if you loop, calling bt->update(). 
  */
-void initializeBtModule( 
+
+namespace bluetooth
+{
+
+void initialize( 
   Adafruit_BLE *bt, void (*onConnect)(void) = NULL, void (*onDisconnect)(void) = NULL,
   void (*onRxBufReceive)(char*, uint16_t) = NULL
 );
@@ -52,10 +56,12 @@ void initializeBtModule(
  * Send the buffer to the BT module. Return true if the module returns "OK", and return
  * false otherwise.
  */
-bool sendToBtModule(Adafruit_BLE *bt, const char* buf);
+bool send(Adafruit_BLE *bt, const char* buf);
 
 // dont allow the BT module to connect to any other components
-bool disableBtConnections(Adafruit_BLE *bt);
+bool disableConnections(Adafruit_BLE *bt);
+
+} // bluetooth
 
 #endif  //BLE_FRIEND_H_
 

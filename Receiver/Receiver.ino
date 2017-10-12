@@ -25,23 +25,20 @@
 unsigned long lastBtWriteTime = 0, now = 0;
 unsigned int btWritePeriod = 1000;  // milliseconds
 
-
-
-void setup() {
-
-	initializeBtModule(&bt_module);
-
+void setup()
+{
+	bluetooth::initialize(&bt_module);
 }
 
-void loop() {
-  // put your main code here, to run repeatedly:
+void loop()
+{
 	now = millis();
 
   if (bt_module.isConnected())
   {
   	if (now - lastBtWriteTime > btWritePeriod)
   	{
-	  	sendToBtModule(&bt_module, "Hello there\n");
+	  	bluetooth::send(&bt_module, "Hello there\n");
 	  	lastBtWriteTime = millis();
 	  }
   }
