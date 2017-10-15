@@ -13,60 +13,61 @@
 //
 //-------------------------------------------------------------------------------
 
-#include "hc12.h"
-#include "TinyGPS.h"
+//#include "hc12.h"
+#include "TinyGPS++.h"
 
 static const int GPS_ONOFFPin = A3;
 static const int GPS_SYSONPin = A2;
 static const int GPSBaud = 9600;
 
-// The TinyGPS++ object
-TinyGPS gps;
+TinyGPSPlus gps;
+
+char message[100];
 
 void setup()
 {  
   bootGPS();
   
-  // Open serial communications and wait for port to open:
-  Serial1.begin(9600);      
+  Serial.begin(9600);      
   Serial2.begin(GPSBaud);
-
-  
-  Serial1.print("Testing TinyGPS library v. "); Serial1.println(TinyGPS::library_version());
-  Serial1.println("by Mikal Hart");
-  Serial1.println();
-  Serial1.println("Sats HDOP Latitude  Longitude  Fix  Date       Time     Date Alt    Course Speed Card  Distance Course Card  Chars Sentences Checksum");
-  Serial1.println("          (deg)     (deg)      Age                      Age  (m)    --- from GPS ----  ---- to London  ----  RX    RX        Fail");
-  Serial1.println("-------------------------------------------------------------------------------------------------------------------------------------");
 }
 
 void loop()
-{
-  float flat, flon;
-  unsigned long age, date, time, chars = 0;
-  unsigned short sentences = 0, failed = 0;
-  static const double LONDON_LAT = 51.508131, LONDON_LON = -0.128002;
+{ 
+  String latitude = String(gps.location.lat(), 6);
+  String longitude = String(gps.location.lng(), 6);
+  String date = String(gps.date.value());
+  String time = String(gps.time.value());
+  String speed = String(gps.speed.mph());
+  String course = String(gps.course.deg());
+  String altitude = String(gps.altitude.miles());
+  String satellites = String(gps.satellites.value());
+  String hdop = String(gps.hdop.value());
   
-  print_int(gps.satellites(), TinyGPS::GPS_INVALID_SATELLITES, 5);
-  print_int(gps.hdop(), TinyGPS::GPS_INVALID_HDOP, 5);
-  gps.f_get_position(&flat, &flon, &age);
-  print_float(flat, TinyGPS::GPS_INVALID_F_ANGLE, 10, 6);
-  print_float(flon, TinyGPS::GPS_INVALID_F_ANGLE, 11, 6);
-  print_int(age, TinyGPS::GPS_INVALID_AGE, 5);
-  print_date(gps);
-  print_float(gps.f_altitude(), TinyGPS::GPS_INVALID_F_ALTITUDE, 7, 2);
-  print_float(gps.f_course(), TinyGPS::GPS_INVALID_F_ANGLE, 7, 2);
-  print_float(gps.f_speed_kmph(), TinyGPS::GPS_INVALID_F_SPEED, 6, 2);
-  print_str(gps.f_course() == TinyGPS::GPS_INVALID_F_ANGLE ? "*** " : TinyGPS::cardinal(gps.f_course()), 6);
-  print_int(flat == TinyGPS::GPS_INVALID_F_ANGLE ? 0xFFFFFFFF : (unsigned long)TinyGPS::distance_between(flat, flon, LONDON_LAT, LONDON_LON) / 1000, 0xFFFFFFFF, 9);
-  print_float(flat == TinyGPS::GPS_INVALID_F_ANGLE ? TinyGPS::GPS_INVALID_F_ANGLE : TinyGPS::course_to(flat, flon, LONDON_LAT, LONDON_LON), TinyGPS::GPS_INVALID_F_ANGLE, 7, 2);
-  print_str(flat == TinyGPS::GPS_INVALID_F_ANGLE ? "*** " : TinyGPS::cardinal(TinyGPS::course_to(flat, flon, LONDON_LAT, LONDON_LON)), 6);
+  sprintf(message, "%s,%s,%s,%s,%s,%s,%s,%s,%s", 
+    latitude.c_str(), 
+    longitude.c_str(), 
+    date.c_str(), 
+    time.c_str(),
+    speed.c_str(),
+    course.c_str(),
+    altitude.c_str(),
+    satellites.c_str(),
+    hdop.c_str());
 
-  gps.stats(&chars, &sentences, &failed);
-  print_int(chars, 0xFFFFFFFF, 6);
-  print_int(sentences, 0xFFFFFFFF, 10);
-  print_int(failed, 0xFFFFFFFF, 9);
-  Serial1.println();
+  Serial.print("String To Send: ------- "); Serial.println(message);
+
+  Serial.print("Longitude (degrees): -- "); Serial.println(latitude); // Latitude in degrees (double)
+  Serial.print("Latitude (degrees): --- "); Serial.println(longitude); // Longitude in degrees (double)
+  Serial.print("Date: ----------------- "); Serial.println(date); // Raw date in DDMMYY format (u32)
+  Serial.print("Time: ----------------- "); Serial.println(time); // Raw time in HHMMSSCC format (u32)
+  Serial.print("Speed (mph): ---------- "); Serial.println(speed); // Speed in miles per hour (double)
+  Serial.print("Course (degrees): ----- "); Serial.println(course); // Course in degrees (double)
+  Serial.print("Altitude (miles): ----- "); Serial.println(altitude); // Altitude in miles (double)
+  Serial.print("Number Of Satellites: - "); Serial.println(satellites); // Number of satellites in use (u32)
+  Serial.print("HDOP: ----------------- "); Serial.println(hdop); // Horizontal Dim. of Precision (100ths-i32)
+  
+  Serial.println();
   
   smartdelay(1000);
 }
@@ -76,74 +77,10 @@ static void smartdelay(unsigned long ms)
   unsigned long start = millis();
   do 
   {
-    while (Serial2.available())
+    while (Serial2.available() > 0)
       gps.encode(Serial2.read());
   } while (millis() - start < ms);
 }
-
-static void print_float(float val, float invalid, int len, int prec)
-{
-  if (val == invalid)
-  {
-    while (len-- > 1)
-      Serial1.print('*');
-    Serial1.print(' ');
-  }
-  else
-  {
-    Serial1.print(val, prec);
-    int vi = abs((int)val);
-    int flen = prec + (val < 0.0 ? 2 : 1); // . and -
-    flen += vi >= 1000 ? 4 : vi >= 100 ? 3 : vi >= 10 ? 2 : 1;
-    for (int i=flen; i<len; ++i)
-      Serial1.print(' ');
-  }
-  smartdelay(0);
-}
-
-static void print_int(unsigned long val, unsigned long invalid, int len)
-{
-  char sz[32];
-  if (val == invalid)
-    strcpy(sz, "*******");
-  else
-    sprintf(sz, "%ld", val);
-  sz[len] = 0;
-  for (int i=strlen(sz); i<len; ++i)
-    sz[i] = ' ';
-  if (len > 0) 
-    sz[len-1] = ' ';
-  Serial1.print(sz);
-  smartdelay(0);
-}
-
-static void print_date(TinyGPS &gps)
-{
-  int year;
-  byte month, day, hour, minute, second, hundredths;
-  unsigned long age;
-  gps.crack_datetime(&year, &month, &day, &hour, &minute, &second, &hundredths, &age);
-  if (age == TinyGPS::GPS_INVALID_AGE)
-    Serial1.print("********** ******** ");
-  else
-  {
-    char sz[32];
-    sprintf(sz, "%02d/%02d/%02d %02d:%02d:%02d ",
-        month, day, year, hour, minute, second);
-    Serial1.print(sz);
-  }
-  print_int(age, TinyGPS::GPS_INVALID_AGE, 5);
-  smartdelay(0);
-}
-
-static void print_str(const char *str, int len)
-{
-  int slen = strlen(str);
-  for (int i=0; i<len; ++i)
-    Serial1.print(i<slen ? str[i] : ' ');
-  smartdelay(0);
-}
-
 
 void bootGPS()
 {
@@ -160,4 +97,5 @@ void bootGPS()
     digitalWrite( GPS_ONOFFPin, LOW );      
   } 
 }
+
 
