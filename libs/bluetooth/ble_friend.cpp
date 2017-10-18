@@ -2,7 +2,7 @@
 #include "general_config.h"
 
 
-Adafruit_BluefruitLE_UART bt_module(BLE_FRIEND_HW_SERIAL, BLE_FRIEND_MODE_PIN);
+Adafruit_BluefruitLE_UART bt_module(BT_SERIAL, BLE_FRIEND_MODE_PIN);
 
 namespace bluetooth
 {
@@ -19,7 +19,7 @@ void initialize(
 	void (*onDisconnect)(void),
 	void (*onRxBufReceive)(char*, uint16_t))
 {
-	while (!BLE_FRIEND_HW_SERIAL);  // just to be sure :)
+	while (!BT_SERIAL);  // just to be sure :)
   delay(100);
   if ( !bt_module.begin(VERBOSE_MODE) )
   {
