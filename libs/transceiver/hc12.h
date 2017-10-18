@@ -2,11 +2,8 @@
 #define HC_12_H_
 #include <Arduino.h>
 
-#define HC12_SERIAL Serial1
-
 namespace hc12
 {
-	// constexpr HardwareSerial& serial  = Serial2;
 	constexpr unsigned int BAUD        = 9600;
 	constexpr unsigned int MAX_MSG_LEN = 512;
 
