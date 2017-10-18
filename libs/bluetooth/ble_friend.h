@@ -20,7 +20,7 @@
  */
 extern Adafruit_BluefruitLE_UART bt_module;
 
-#define BLE_FRIEND_HW_SERIAL Serial1
+#define BLE_FRIEND_HW_SERIAL Serial2
 #define BLE_FRIEND_MODE_PIN       12
 
 // max bufsize for incoming data to the serial port

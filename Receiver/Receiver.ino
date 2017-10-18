@@ -28,18 +28,21 @@ unsigned int btWritePeriod = 1000;  // milliseconds
 
 void setup()
 {
+  UserSerial.begin(9600);
 	bluetooth::initialize(&bt_module);
+  hc12::initialize();
 }
 
 void loop()
 {
 	now = millis();
+  hc12::processBytes();
 
   if (bt_module.isConnected())
   {
   	if (now - lastBtWriteTime > btWritePeriod)
   	{
-	  	bluetooth::send(&bt_module, "Hello there\n");
+	  	bluetooth::send(&bt_module, hc12::lastRxMsg);
 	  	lastBtWriteTime = millis();
 	  }
   }

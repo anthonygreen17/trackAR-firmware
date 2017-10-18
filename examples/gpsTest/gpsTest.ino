@@ -13,7 +13,7 @@
 //
 //-------------------------------------------------------------------------------
 
-//#include "hc12.h"
+#include "hc12.h"
 #include "TinyGPS++.h"
 
 static const int GPS_ONOFFPin = A3;
@@ -28,8 +28,10 @@ void setup()
 {  
   bootGPS();
   
-  Serial.begin(9600);      
+  Serial.begin(9600);    
   Serial2.begin(GPSBaud);
+
+  hc12::initialize();
 }
 
 void loop()
@@ -55,19 +57,20 @@ void loop()
     satellites.c_str(),
     hdop.c_str());
 
-  Serial.print("String To Send: ------- "); Serial.println(message);
+//  Serial.print("String To Send: ------- "); Serial.println(message);
+//
+//  Serial.print("Longitude (degrees): -- "); Serial.println(latitude); // Latitude in degrees (double)
+//  Serial.print("Latitude (degrees): --- "); Serial.println(longitude); // Longitude in degrees (double)
+//  Serial.print("Date: ----------------- "); Serial.println(date); // Raw date in DDMMYY format (u32)
+//  Serial.print("Time: ----------------- "); Serial.println(time); // Raw time in HHMMSSCC format (u32)
+//  Serial.print("Speed (mph): ---------- "); Serial.println(speed); // Speed in miles per hour (double)
+//  Serial.print("Course (degrees): ----- "); Serial.println(course); // Course in degrees (double)
+//  Serial.print("Altitude (miles): ----- "); Serial.println(altitude); // Altitude in miles (double)
+//  Serial.print("Number Of Satellites: - "); Serial.println(satellites); // Number of satellites in use (u32)
+//  Serial.print("HDOP: ----------------- "); Serial.println(hdop); // Horizontal Dim. of Precision (100ths-i32)
+//  Serial.println();
 
-  Serial.print("Longitude (degrees): -- "); Serial.println(latitude); // Latitude in degrees (double)
-  Serial.print("Latitude (degrees): --- "); Serial.println(longitude); // Longitude in degrees (double)
-  Serial.print("Date: ----------------- "); Serial.println(date); // Raw date in DDMMYY format (u32)
-  Serial.print("Time: ----------------- "); Serial.println(time); // Raw time in HHMMSSCC format (u32)
-  Serial.print("Speed (mph): ---------- "); Serial.println(speed); // Speed in miles per hour (double)
-  Serial.print("Course (degrees): ----- "); Serial.println(course); // Course in degrees (double)
-  Serial.print("Altitude (miles): ----- "); Serial.println(altitude); // Altitude in miles (double)
-  Serial.print("Number Of Satellites: - "); Serial.println(satellites); // Number of satellites in use (u32)
-  Serial.print("HDOP: ----------------- "); Serial.println(hdop); // Horizontal Dim. of Precision (100ths-i32)
-  
-  Serial.println();
+  hc12::send(message);
   
   smartdelay(1000);
 }
