@@ -2,22 +2,28 @@
 #include "TinyGPS++.h"
 #include "trackAR_gps.h"
 #include "general_config.h"
+#include "trackAR_sleep.h"
 
 char gps_message[150];
 
 void setup()
 {  
-  gps::boot();
-  GPS_SERIAL.begin(gps::BAUD);
+  gps::boot();  
   hc12::initialize();
   UserSerial.begin(115200);
+  GPS_SERIAL.begin(gps::BAUD);
+  smartdelay(10000);
+  UserSerial.println("received 6 sentences..");
 }
 
 void loop()
-{ 
+{
+  sleepUntilUartRX();
+  smartdelay(10000);
   gps::formatMessage(gps_message);
   hc12::send(gps_message);
-  smartdelay(1000);
+  UserSerial.println("received 6 sentences..");
+  delay(25);
 }
 
 /**
@@ -25,10 +31,29 @@ void loop()
  */
 static void smartdelay(unsigned long ms)
 {
+  int numSentences = 0;
   unsigned long start = millis();
   do 
   {
+//    UserSerial.println("no bytes");
     while (GPS_SERIAL.available() > 0)
-      tinyGps.encode(GPS_SERIAL.read());
-  } while (millis() - start < ms);
+    {
+      char c = GPS_SERIAL.read();
+      if (c == '\n')
+      {
+        UserSerial.println("NL---");
+        numSentences++;
+      }
+      else if (c == '\r')
+      {
+        UserSerial.println("CR-----");
+        
+      }
+      else if (c == '$')
+        UserSerial.println("MESSAGE START");
+//      else
+//        UserSerial.println(c);
+    tinyGps.encode(c);
+    }
+  } while ((millis() - start < ms) && numSentences < 6);
 }
