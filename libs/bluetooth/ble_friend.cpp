@@ -45,10 +45,12 @@ void initialize(
 		bt->setBleUartRxCallback(onRxBufReceive);
 }
 
-bool send(Adafruit_BLE *bt, const char* buf)
+bool send(Adafruit_BLE *bt, const char* buf, const char* delim)
 {
+	char msg[strlen(buf) + strlen(delim) + 1];
+	sprintf(msg, "%s%s", buf, delim);
 	bt->print("AT+BLEUARTTX=");
-	bt->println(buf);
+	bt->println(msg);
 	return bt->waitForOK();
 }
 

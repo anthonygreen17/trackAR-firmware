@@ -8,9 +8,9 @@ char gps_message[150];
 void setup()
 {  
   gps::boot();
-  GPS_SERIAL.begin(gps::BAUD);  
+  GPS_SERIAL.begin(gps::BAUD);
   hc12::initialize();
-  UserSerial.begin(9600);     
+  UserSerial.begin(115200);
 }
 
 void loop()
