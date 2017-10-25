@@ -7,14 +7,9 @@
 
 void sleepUntilUartRX()
 {
-	/* Now is the time to set the sleep mode. In the Atmega8 datasheet
-	 * http://www.atmel.com/dyn/resources/prod_documents/doc2486.pdf on page 35
-	 * there is a list of sleep modes which explains which clocks and
-	 * wake up sources are available in which sleep modus.
+	/*
+	 * Sleep modes from avr/sleep.h:
 	 *
-	 * In the avr/sleep.h file, the call names of these sleep modus are to be found:
-	 *
-	 * The 5 different modes are:
 	 * SLEEP_MODE_IDLE -the least power savings
 	 * SLEEP_MODE_ADC
 	 * SLEEP_MODE_PWR_SAVE
@@ -25,10 +20,10 @@ void sleepUntilUartRX()
 	 * http://www.nongnu.org/avr-libc/user-manual/group_avr_power.html
 	 */
 
-	set_sleep_mode(SLEEP_MODE_IDLE); // sleep mode is set here
+	set_sleep_mode(SLEEP_MODE_IDLE);
 
-	sleep_enable(); // enables the sleep bit in the mcucr register
-	// so sleep is possible. just a safety pin
+	// enables the sleep bit in the mcucr register, doesnt sleep yet
+	sleep_enable();
 
 	power_adc_disable();
 	power_spi_disable();
@@ -40,19 +35,17 @@ void sleepUntilUartRX()
 	power_usart0_disable();
 	power_usart1_disable();
 
-	sleep_mode(); // here the device is actually put to sleep!!
+	// put the device to sleep
+	sleep_mode(); 
 
 	// THE PROGRAM CONTINUES FROM HERE AFTER WAKING UP
-	sleep_disable(); // first thing after waking from sleep:
+	sleep_disable();
 
 	// power_timer0_enable();
 	// power_timer1_enable();
 	// power_timer2_enable();
 	// power_usart0_enable();
 	// power_usart1_enable();
-	// disable sleep...
 
 	power_all_enable();
-	//UserSerial.print("Bytes available on GPS UART port: ");
-	UserSerial.println(GPS_SERIAL.available());
 }
