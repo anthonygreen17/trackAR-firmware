@@ -31,7 +31,7 @@ void setup()
  */
 void loop()
 {
-  sleepUntilUartRX();
+  sleepUntilUartRX(usart_wake);
   gps::smartDelay(10000);
   gps::formatInto(gps_message);
   hc12::send(gps_message);

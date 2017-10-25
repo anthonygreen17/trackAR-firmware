@@ -5,7 +5,7 @@
 #include "Arduino.h"
 
 
-void sleepUntilUartRX()
+void sleepUntilUartRX(USART_WAKE_RX usart_wake)
 {
 	/*
 	 * Sleep modes from avr/sleep.h:
@@ -33,7 +33,15 @@ void sleepUntilUartRX()
 	power_twi_disable();
 
 	power_usart0_disable();
-	power_usart1_disable();
+	switch (usart_wake)
+	{
+		case SLEEP_UNTIL_USART_1:
+			power_usart2_disable();
+			break;
+		case SLEEP_UNTIL_USART_2:
+			power_usart1_disable();
+			break;
+	}
 
 	// put the device to sleep
 	sleep_mode(); 

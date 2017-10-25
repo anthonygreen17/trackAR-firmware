@@ -9,8 +9,10 @@ typedef enum USART_WAKE_RX : uint8_t {
 } USART_WAKE_RX;
 
 /**
- *  Sleep until we see RX data on one of the UART ports.
+ *  Sleep until we see RX data on one of the UART ports. We will always sleep Serial0 (UserSerial)
+ *  and we will also sleep the USART module NOT specified by "usart_wake" - we basically want to
+ *  disable everything except the USART module we'll want to wake from.
  */
-void sleepUntilUartRX();
+void sleepUntilUartRX(USART_WAKE_RX usart_wake);
 
 #endif
