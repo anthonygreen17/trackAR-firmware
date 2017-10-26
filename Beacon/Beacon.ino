@@ -9,7 +9,8 @@ char gps_message[150];
 USART_WAKE_RX usart_wake = SLEEP_UNTIL_USART_2;
 
 void setup()
-{  
+{ 
+  disableUnneededPeriphs(BEACON);
   gps::boot();  
   hc12::initialize();
   UserSerial.begin(115200);
@@ -31,7 +32,7 @@ void setup()
  */
 void loop()
 {
-  sleepUntilUartRX(usart_wake);
+  sleepUntilUartRX(usart_wake, BEACON);
   if (!gps::smartDelay(1500))
   {
     UserSerial.println("Problem syncing GPS. Resyncing...");

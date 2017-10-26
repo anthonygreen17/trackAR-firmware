@@ -2,6 +2,7 @@
 #define TRACKAR_SLEEP_H_
 
 #include <Arduino.h>
+#include "general_config.h"
 
 typedef enum USART_WAKE_RX : uint8_t {
 	SLEEP_UNTIL_USART_1,
@@ -13,6 +14,12 @@ typedef enum USART_WAKE_RX : uint8_t {
  *  and we will also sleep the USART module NOT specified by "usart_wake" - we basically want to
  *  disable everything except the USART module we'll want to wake from.
  */
-void sleepUntilUartRX(USART_WAKE_RX usart_wake);
+void sleepUntilUartRX(USART_WAKE_RX usart_wake, TrackARDevice dev);
+
+
+/**
+ *  Disable things that we dont need.
+ */
+void disableUnneededPeriphs(TrackARDevice dev);
 
 #endif

@@ -5,7 +5,22 @@
 #include "Arduino.h"
 
 
-void sleepUntilUartRX(USART_WAKE_RX usart_wake)
+void disableUnneededPeriphs(TrackARDevice dev)
+{
+	switch(dev)
+	{
+		case BEACON:
+			power_adc_disable();
+			power_spi_disable();
+			power_twi_disable();
+			break;
+
+		case RECEIVER:
+			break;
+	}
+}
+
+void sleepUntilUartRX(USART_WAKE_RX usart_wake, TrackARDevice dev)
 {
 	/*
 	 * Sleep modes from avr/sleep.h:
@@ -24,22 +39,15 @@ void sleepUntilUartRX(USART_WAKE_RX usart_wake)
 
 	// enables the sleep bit in the mcucr register, doesnt sleep yet
 	sleep_enable();
+	power_all_disable();
 
-	power_adc_disable();
-	power_spi_disable();
-	power_timer0_disable();
-	power_timer1_disable();
-	power_timer2_disable();
-	power_twi_disable();
-
-	power_usart0_disable();
 	switch (usart_wake)
 	{
 		case SLEEP_UNTIL_USART_1:
-			power_usart2_disable();
+			power_usart1_enable();
 			break;
 		case SLEEP_UNTIL_USART_2:
-			power_usart1_disable();
+			power_usart2_enable();
 			break;
 	}
 
@@ -48,12 +56,6 @@ void sleepUntilUartRX(USART_WAKE_RX usart_wake)
 
 	// THE PROGRAM CONTINUES FROM HERE AFTER WAKING UP
 	sleep_disable();
-
-	// power_timer0_enable();
-	// power_timer1_enable();
-	// power_timer2_enable();
-	// power_usart0_enable();
-	// power_usart1_enable();
-
 	power_all_enable();
+	disableUnneededPeriphs(dev);
 }
