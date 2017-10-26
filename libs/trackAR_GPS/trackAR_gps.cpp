@@ -51,32 +51,42 @@ void formatInto(char* gps_message, bool user_serial_debug)
   }
 }
 
-void smartDelay(unsigned int ms)
+/**
+ *  A "full message" consists of 6 NMEA strings delimited by "\r\n"
+ */
+static bool receiveFullMsg(unsigned int max_wait_ms)
 {
   int numSentences = 0;
   unsigned long start = millis();
+
+  /**
+   *  0 = default state, 1 = received "\r"
+   *  Used to detect '\r' directly followed by '\n'
+   */
+  unsigned int state = 0; 
   do 
   {
     while (GPS_SERIAL.available() > 0)
     {
       char c = GPS_SERIAL.read();
-      if (c == '\n')
+      if ( (c == '\n') && state == 1)
       {
-        UserSerial.println("NL---");
-        numSentences++;
+        state = 0;
+        if (++numSentences == SENTENCES_PER_TRANSMISSION)
+          return true;
       }
       else if (c == '\r')
       {
-        UserSerial.println("CR-----");
-        
+        state++;
       }
-      else if (c == '$')
-        UserSerial.println("MESSAGE START");
-//      else
-//        UserSerial.println(c);
+      else
+      {
+        state = 0;
+      }
     tinyGps.encode(c);
     }
-  } while ((millis() - start < ms) && numSentences < 6);
+  } while ((millis() - start < max_wait_ms));
+  return false;
 }
 
 /**
@@ -99,55 +109,14 @@ static bool findTransmissionEnd(unsigned int ms)
   return false;
 }
 
-/**
- *  A "full message" consists of 6 NMEA strings delimited by "\r\n"
- */
-static bool receiveFullMsg(unsigned int max_wait_ms)
+bool smartDelay(unsigned int ms)
 {
-  int numSentences = 0;
-  unsigned long start = millis();
-
-  /**
-   *  0 = default state, 1 = received "\r"
-   *  Used to detect '\r' directly followed by '\n'
-   */
-  unsigned int state = 0; 
-  do 
-  {
-    while (GPS_SERIAL.available() > 0)
-    {
-      char c = GPS_SERIAL.read();
-      if ( (c == '\n') && state == 1)
-      {
-        UserSerial.println("NL---");
-        state = 0;
-        if (++numSentences == SENTENCES_PER_TRANSMISSION)
-          return true;
-      }
-      else if (c == '\r')
-      {
-        state++;
-        UserSerial.println("CR-----");
-      }
-      // else if (c == '$')
-      // {
-      //   state = 0;
-      //   UserSerial.println("MESSAGE START");
-      // }
-      else
-      {
-        state = 0;
-      }
-    tinyGps.encode(c);
-    }
-  } while ((millis() - start < max_wait_ms));
-  return false;
+  return receiveFullMsg(ms);
 }
-
 
 bool sync(unsigned int max_wait_ms)
 {
-  if (findTransmissionEnd(RATE_MS * 2))
+  if (findTransmissionEnd(RATE_MS * 2))  // max 2 iterations to find transmission end
     return receiveFullMsg(max_wait_ms);
   else
     UserSerial.println("Couldnt find the end of the GPS transmission!");

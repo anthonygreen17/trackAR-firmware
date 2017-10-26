@@ -18,7 +18,7 @@ void setup()
     UserSerial.println("Problem syncing GPS!");
   else
     UserSerial.println("GPS properly synced");
-  delay(25);
+  UserSerial.flush();
 }
 
 /**
@@ -32,11 +32,14 @@ void setup()
 void loop()
 {
   sleepUntilUartRX(usart_wake);
-  gps::smartDelay(10000);
+  if (!gps::smartDelay(1500))
+  {
+    UserSerial.println("Problem syncing GPS. Resyncing...");
+    gps::sync();
+  }
   gps::formatInto(gps_message);
   hc12::send(gps_message);
-  UserSerial.println("received 6 sentences..");
-  delay(25);
+  HC12_SERIAL.flush();
 }
 
 

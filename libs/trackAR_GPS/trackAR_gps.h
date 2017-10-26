@@ -34,10 +34,13 @@ void formatInto(char* message, bool user_serial_debug = true);
 bool sync(unsigned int max_wait_ms = 5000);
 
 /**
- *  Wait for the desired amount of time by looping and reading data as it comes in 
+ *  Wait for a maximium of "ms" time, looping and reading data as it comes in 
  *  from the GPS. Do NOT call delay().
+ *
+ *  Return true if we exit due to a fully parsed transmission.
+ *  Return false to indicate a timeout.
  */
-void smartDelay(unsigned int ms);
+bool smartDelay(unsigned int ms);
 
 } //gps
 
