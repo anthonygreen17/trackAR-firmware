@@ -10,11 +10,13 @@
 #define LED     13
 #define ISR_PIN  2
 #define USE_RISING_EDGE  1
-#define TRIGGERED_DELAY 500  // wait 500ms between ISRs to avoid debouncing
+#define TRIGGERED_DELAY 100  // wait 200ms after checking ISR state to avoid debounce
+
+int counter = 0;
+unsigned long int lastInterrupt = 0;
 
 void setup()
 {
-  // put your setup code here, to run once:
   Serial.begin(115200);
 
   // disable interrupts until we are done configuring interrupts
@@ -23,19 +25,20 @@ void setup()
   digitalWrite(LED, 0);
   setupPinChangeInterrupt(USE_RISING_EDGE);
   interrupts();
+  Serial.println("starting up...");
 }
 
 void loop()
 {
   if (ISR_PIN_STATE)
   {
-    disablePinChangeInterrupt();
-    digitalWrite(LED, !digitalRead(LED));
-    Serial.println("suhh");
-    ISR_PIN_STATE = false;
     delay(TRIGGERED_DELAY);
-    Serial.println("---");
-    setupPinChangeInterrupt(USE_RISING_EDGE);
+    ISR_PIN_STATE = false;
+    if (digitalRead(ISR_PIN))
+    {
+      digitalWrite(LED, !digitalRead(LED));
+      Serial.println(++counter);
+    }
   }
 }
 
