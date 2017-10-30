@@ -3,6 +3,11 @@
 
 #include <Arduino.h>
 
+typedef enum TrackARDevice : uint8_t {
+	BEACON,
+	RECEIVER,
+} TrackARDevice;
+
 
 #define UserSerial  Serial 
 #define HC12_SERIAL Serial1

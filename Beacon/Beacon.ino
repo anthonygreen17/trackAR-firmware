@@ -2,33 +2,45 @@
 #include "TinyGPS++.h"
 #include "trackAR_gps.h"
 #include "general_config.h"
+#include "trackAR_sleep.h"
 
 char gps_message[150];
 
-void setup()
-{  
-  gps::boot();
-  GPS_SERIAL.begin(gps::BAUD);  
-  hc12::initialize();
-  UserSerial.begin(9600);     
-}
+USART_WAKE_RX usart_wake = SLEEP_UNTIL_USART_2;
 
-void loop()
+void setup()
 { 
-  gps::formatMessage(gps_message);
-  hc12::send(gps_message);
-  smartdelay(1000);
+  disableUnneededPeriphs(BEACON);
+  gps::boot();  
+  hc12::initialize();
+  UserSerial.begin(115200);
+  GPS_SERIAL.begin(gps::BAUD);
+  if (!gps::sync())
+    UserSerial.println("Problem syncing GPS!");
+  else
+    UserSerial.println("GPS properly synced");
+  UserSerial.flush();
 }
 
 /**
- *  Instead of sleeping, continually loop for "ms" milliseconds, checking for data on the GPS_SERIAL line.
+ *  The call to gps::sync() should return immediately as a transmission is completed. So, when we
+ *  call sleepUntilUartRx(), that means we should sleep for almost an entire second, until the 
+ *  very first byte of the next transmission is received. At that point, we need to bail out of
+ *  sleep mode and process all of the bytes of the transmission using gps::smartDelay().
+ *
+ *  Then, simply format and send out the latest received GPS data.
  */
-static void smartdelay(unsigned long ms)
+void loop()
 {
-  unsigned long start = millis();
-  do 
+  sleepUntilUartRX(usart_wake, BEACON);
+  if (!gps::smartDelay(1500))
   {
-    while (GPS_SERIAL.available() > 0)
-      tinyGps.encode(GPS_SERIAL.read());
-  } while (millis() - start < ms);
+    UserSerial.println("Problem syncing GPS. Resyncing...");
+    gps::sync();
+  }
+  gps::formatInto(gps_message);
+  hc12::send(gps_message);
+  HC12_SERIAL.flush();
 }
+
+

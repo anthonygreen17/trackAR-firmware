@@ -55,7 +55,7 @@ void initialize(
  * Send the buffer to the BT module. Return true if the module returns "OK", and return
  * false otherwise.
  */
-bool send(Adafruit_BLE *bt, const char* buf);
+bool send(Adafruit_BLE *bt, const char* buf, const char* delim = "");
 
 // dont allow the BT module to connect to any other components
 bool disableConnections(Adafruit_BLE *bt);
