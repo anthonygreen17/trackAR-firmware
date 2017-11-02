@@ -1,6 +1,7 @@
 #include "trackAR_sleep.h"
 #include "avr/sleep.h"
 #include "avr/power.h"
+#include "avr/wdt.h"
 #include "general_config.h"
 #include "Arduino.h"
 
@@ -55,6 +56,34 @@ void sleepUntilUartRX(USART_WAKE_RX usart_wake, TrackARDevice dev)
 	sleep_mode(); 
 
 	// THE PROGRAM CONTINUES FROM HERE AFTER WAKING UP
+	sleep_disable();
+	power_all_enable();
+	disableUnneededPeriphs(dev);
+}
+
+void setupWdtInterrupt(WDT_SLEEP_LENGTH length)
+{
+	// clear reset flag so that we're able to modify register contents
+  // MCUSR &= ~(1<<WDRF);
+  MCUSR = 0;
+  
+  // setting these enable bits allow us to change WDT parameters within the next 4 clock cycles 
+  WDTCSR |= (1<<WDCE) | (1<<WDE);
+
+  //set new watchdog timeout prescaler value
+  WDTCSR = length;
+  
+  // Set the wdt to interrupt, not reset the MCU
+  WDTCSR |= 1 << WDIE;
+  wdt_reset();
+}
+
+
+void sleepPwrDown(TrackARDevice dev)
+{
+	set_sleep_mode(SLEEP_MODE_PWR_DOWN);
+	sleep_mode();
+
 	sleep_disable();
 	power_all_enable();
 	disableUnneededPeriphs(dev);
