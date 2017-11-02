@@ -36,12 +36,7 @@ void setup()
 void loop()
 {
 	now = millis();
-  //hc12::processBytes();
-  while (HC12_SERIAL.available() > 0)
-  {
-    Serial.println("FDHQA");
-    Serial.println(HC12_SERIAL.read());
-  }
+	hc12::processBytes();
 
   if (bt_module.isConnected())
   {
