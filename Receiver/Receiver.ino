@@ -35,8 +35,8 @@ void setup()
 
 void loop()
 {
-	now = millis();
-	hc12::processBytes();
+  now = millis();
+  hc12::processBytes();
 
   if (bt_module.isConnected())
   {
