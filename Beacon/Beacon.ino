@@ -3,10 +3,12 @@
 #include "trackAR_gps.h"
 #include "general_config.h"
 #include "trackAR_sleep.h"
+#include "serializer.h"
 #include "avr/wdt.h"
 
 char gps_message[150];
 USART_WAKE_RX usart_wake = SLEEP_UNTIL_USART_2;
+uint8_t serialized_gps_data[HC12_TRANSMIT_SIZE];
 
 void setup()
 { 
@@ -33,28 +35,45 @@ void setup()
  *  sleep mode, SLEEP_MODE_PWR_DOWN, which saves a LOT more power than the SLEEP_MODE_IDLE that is needed
  *  to wake up via UART RX. The time between the first RX byte from the GPS and the last TX byte sent 
  *  out to the transceiver has been found to be ~400ms. To be safe, we'll use the WDT to sleep for 
- *  around 500ms before going into SLEEP_MODE_IDLE to let the GPS wake us up.
+ *  around 375ms before going into SLEEP_MODE_IDLE to let the GPS wake us up.
  */
 void loop()
 {
-  setupWdtInterrupt(MS_500);
+  setupWdtInterrupt(MS_250);
   sleepPwrDown(BEACON);
   disableWdt();
-  /* hc12::exitSleep(); */
+  setupWdtInterrupt(MS_125);
+  sleepPwrDown(BEACON);
+  disableWdt();
   sleepUntilUartRX(usart_wake, BEACON);
+
+//  hc12::exitSleep();
 
   /**
    * The typical time from this point to the end of the loop was 
    * found to be ~400ms
    */
-  if (!gps::smartDelay(1500))
+   
+  if (!gps::smartDelay(2000))
   {
     UserSerial.println("Problem syncing GPS. Resyncing...");
     gps::sync();
   }
-  gps::formatInto(gps_message);
-  hc12::send(gps_message);
+  gps::serializeInto(serialized_gps_data, true);
+  UserSerial.flush();
+//  deserialize(serialized_gps_data);
+//  UserSerial.flush();
+  hc12::send(serialized_gps_data, HC12_TRANSMIT_SIZE);
   HC12_SERIAL.flush();
+  
+//  hc12::prepareSleep(); 
+//  
+//  setupWdtInterrupt(MS_32);
+//  sleepPwrDown(BEACON);
+//  disableWdt();
+//
+//  hc12::enterSleep();
+  
   /* hc12::sleep() */
 }
 
