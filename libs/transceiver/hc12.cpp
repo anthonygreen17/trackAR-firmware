@@ -60,10 +60,10 @@ namespace hc12
 		packet_init(sendPacket, processPacket, PACKET_HANDLER);
 		
 		//initialize pin that puts transceiver into command mode, set it to LOW to put into command mode
-		pinMode(TRANSCEIVER_SET, OUTPUT);
+		pinMode(SET_PIN, OUTPUT);
 		
 		//Transceiver is not in command mode at start
-		digitalWrite(TRANSCEIVER_SET, HIGH); 
+		digitalWrite(SET_PIN, HIGH); 
 	}
 
 	void send(const char* msg)
@@ -84,22 +84,15 @@ namespace hc12
 		}
 	}
 
-	void transceiverSleep(){
-	  digitalWrite(TRANSCEIVER_SET, LOW); 
-	  delay(40);
+	void sleep(){
 	  HC12_SERIAL.write("AT+SLEEP");
 	  HC12_SERIAL.flush();
-	  digitalWrite(TRANSCEIVER_SET, HIGH); 
-	  //MIGHT need an additonal delay here!!!!
+	  digitalWrite(SET_PIN, HIGH); 
 	}
 
-	void transceiverDefault(){
-	  digitalWrite(TRANSCEIVER_SET, LOW); 
-	  delay(40);
-	  HC12_SERIAL.write("AT+DEFAULT");
-	  HC12_SERIAL.flush();
-	  digitalWrite(TRANSCEIVER_SET, HIGH); 
-	  //MIGHT need an additonal delay here!!!!
+	void unsleep(){
+	  digitalWrite(SET_PIN, LOW); 
+	  digitalWrite(SET_PIN, HIGH); 
 	}
 
 	// bool processBytes()

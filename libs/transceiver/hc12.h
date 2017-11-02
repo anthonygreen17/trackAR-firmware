@@ -6,6 +6,7 @@ namespace hc12
 {
 	constexpr unsigned int BAUD        = 9600;
 	constexpr unsigned int MAX_MSG_LEN = 512;
+	constexpr unsigned int SET_PIN     = A1;
 
 	/**
 	 * Send this over bluetooth if we connect and havent received any transceiver data yet.
@@ -36,6 +37,11 @@ namespace hc12
 	 */
 	void send(const char* msg);
 	void send(uint8_t* data, unsigned int length);
+	void sleep();
+	void unsleep();
 }
 
+#define hc12PrepareSleep() (digitalWrite(hc12::SET_PIN, LOW))
+
 #endif // HC_12_H_
+

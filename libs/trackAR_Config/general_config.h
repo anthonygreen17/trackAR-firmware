@@ -13,9 +13,8 @@ typedef enum TrackARDevice : uint8_t {
 #define HC12_SERIAL Serial1
 
 // bluetooth and gps will use same serial, since GPS is only on Beacon and bluetooth is only on receiver
-#define GPS_SERIAL  Serial2
-#define BT_SERIAL   Serial2
-#define TRANSCEIVER_SET A1
+#define GPS_SERIAL       Serial2
+#define BT_SERIAL        Serial2
 
 
 #endif // CONFG_H_
