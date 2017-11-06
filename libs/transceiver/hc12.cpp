@@ -8,15 +8,8 @@ extern "C" {
 
 namespace hc12
 {
-	volatile char lastRxMsg[MAX_MSG_LEN] = "\0";
-
-	/**
-	 * Hold data in here until we receive a full message, then copy it over to the lastRxMsg buffer.
-	 */
-	static char buf[MAX_MSG_LEN];
-	static volatile unsigned int bufWriteIndex = 0;
-	static volatile bool firstDelimReceived = false;
-
+	volatile uint8_t lastRxMsg[MAX_MSG_LEN]; 
+	volatile bool receiving = false;
 	static const int PACKET_HANDLER = 0;
 
 	// various private functions
@@ -46,7 +39,7 @@ namespace hc12
 
 		// copy the received payload into lastRxMsg
 		memcpy((void*)lastRxMsg, data, length);
-		lastRxMsg[length] = '\0';
+		receiving = true;
 	}
 
 	void initialize()
@@ -54,10 +47,11 @@ namespace hc12
 		HC12_SERIAL.begin(BAUD);
 
 		// until we receive a message, set this up to send the noPosReceivedMsg to bluetooth module
-		strcpy((char*)lastRxMsg, noPosReceivedMsg);
+		lastRxMsg[0] = noPosReceivedMsg;
 
 		// initialize the packet interface to do the packet header/checksum/footer stuff for us
 		packet_init(sendPacket, processPacket, PACKET_HANDLER);
+		receiving = false;
 	}
 
 	void send(const char* msg)

@@ -1,21 +1,24 @@
 #ifndef HC_12_H_
 #define HC_12_H_
 #include <Arduino.h>
+#include "serializer.h"
 
 namespace hc12
 {
 	constexpr unsigned int BAUD        = 9600;
-	constexpr unsigned int MAX_MSG_LEN = 512;
+	constexpr unsigned int MAX_MSG_LEN = sizeof(gps_vals_t);
 
 	/**
 	 * Send this over bluetooth if we connect and havent received any transceiver data yet.
 	 */
-	constexpr const char* noPosReceivedMsg = "NOPOS";
+	// constexpr const char* noPosReceivedMsg = "NOPOS";
+	constexpr const uint8_t noPosReceivedMsg = 14;
+	extern volatile bool receiving;
 
 	/**
 	 * Statically allocate a buffer to hold the last received message.
 	 */
-	extern volatile char lastRxMsg[MAX_MSG_LEN];
+	extern volatile uint8_t lastRxMsg[MAX_MSG_LEN];
 	extern volatile unsigned int lastRxMsgLength;
 
 	/**
