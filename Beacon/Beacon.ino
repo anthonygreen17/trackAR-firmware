@@ -10,6 +10,11 @@ char gps_message[150];
 USART_WAKE_RX usart_wake = SLEEP_UNTIL_USART_2;
 uint8_t serialized_gps_data[HC12_TRANSMIT_SIZE];
 
+/**
+ *  Set this to true for maaaaaad debug printed to UserSerial
+ */
+#define USER_DEBUG true
+
 void setup()
 { 
   disableUnneededPeriphs(BEACON);
@@ -51,7 +56,7 @@ void loop()
 
   /**
    * The typical time from this point to the end of the loop was 
-   * found to be ~400ms
+   * found to be ~400ms, when sending a ~60byte string at 9600 baud
    */
    
   if (!gps::smartDelay(2000))
@@ -59,15 +64,29 @@ void loop()
     UserSerial.println("Problem syncing GPS. Resyncing...");
     gps::sync();
   }
-  gps::serializeInto(serialized_gps_data, true);
-  UserSerial.flush();
-  
-//  deserialize(serialized_gps_data);
-//  UserSerial.flush();
-//  
+  gps::serializeInto(serialized_gps_data, USER_DEBUG);
+
+  if (USER_DEBUG)
+  {
+    UserSerial.flush();
+    printSerializedDataBytes(serialized_gps_data);
+    deserialize(serialized_gps_data);
+    UserSerial.flush();
+  }
+
   hc12::send(serialized_gps_data, HC12_TRANSMIT_SIZE);
   HC12_SERIAL.flush();
-  
+
+  if (USER_DEBUG)
+  {
+    UserSerial.println("\n");
+    UserSerial.flush();
+  }
+
+
+  /**
+   *  The code below is a template for use once we get hc12 sleeping functions working.
+   */
 //  hc12::prepareSleep(); 
 //  
 //  setupWdtInterrupt(MS_32);
@@ -80,7 +99,7 @@ void loop()
 }
 
 /**
- * Test function to print out deserialized bytes
+ * Test function to print out deserialized bytes.
  */
 void printSerializedDataBytes(uint8_t data[12])
 {
@@ -94,7 +113,9 @@ void printSerializedDataBytes(uint8_t data[12])
   UserSerial.flush();
 }
 
-
+/**
+ *  We don't actually need this to do anything. We just want to wake up from sleep.
+ */
 ISR(WDT_vect)
 {
 

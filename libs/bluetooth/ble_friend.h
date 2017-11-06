@@ -57,6 +57,11 @@ void initialize(
  */
 bool send(Adafruit_BLE *bt, const char* buf, const char* delim = "");
 
+/**
+ *  Send a raw byte array to the bluetooth module.
+ */
+bool send(Adafruit_BLE *bt, const uint8_t* buf, const unsigned int length);
+
 // dont allow the BT module to connect to any other components
 bool disableConnections(Adafruit_BLE *bt);
 

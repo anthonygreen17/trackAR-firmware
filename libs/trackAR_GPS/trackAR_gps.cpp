@@ -47,7 +47,6 @@ void formatInto(char* gps_message, bool user_serial_debug)
   if (user_serial_debug)
   {
     UserSerial.print("GPS message..."); UserSerial.println(gps_message);
-    UserSerial.println();
   }
 }
 
@@ -72,7 +71,6 @@ void serializeInto(uint8_t buf[HC12_TRANSMIT_SIZE], bool user_serial_debug)
       altitude.c_str()
     );
     UserSerial.print("GPS message ||"); UserSerial.println(msg);
-    UserSerial.println();
 }
 
 /**

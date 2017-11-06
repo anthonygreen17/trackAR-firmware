@@ -6,20 +6,12 @@
 namespace hc12
 {
 	constexpr unsigned int BAUD        = 9600;
-	constexpr unsigned int MAX_MSG_LEN = sizeof(gps_vals_t);
+	constexpr unsigned int MSG_LEN = sizeof(gps_vals_t);
 
 	/**
 	 * Send this over bluetooth if we connect and havent received any transceiver data yet.
 	 */
-	// constexpr const char* noPosReceivedMsg = "NOPOS";
 	constexpr const uint8_t noPosReceivedMsg = 14;
-	extern volatile bool receiving;
-
-	/**
-	 * Statically allocate a buffer to hold the last received message.
-	 */
-	extern volatile uint8_t lastRxMsg[MAX_MSG_LEN];
-	extern volatile unsigned int lastRxMsgLength;
 
 	/**
 	 * Carry out any necessary configuration tasks.
@@ -39,6 +31,15 @@ namespace hc12
 	 */
 	void send(const char* msg);
 	void send(uint8_t* data, unsigned int length);
+
+	/**
+	 *  Send the transceiver message with the provided function. This allows us an easy way
+	 *  to internally send either the last received message, or the "noPosReceivedMessage",
+	 *  depending on if we have received data or not.
+	 *
+	 *  NOTE: intended for bluetooth module send function
+	 */
+	void sendRxDataWithFunc( void (*func)(uint8_t*, unsigned int) );
 }
 
 #endif // HC_12_H_

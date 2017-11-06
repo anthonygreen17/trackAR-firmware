@@ -54,6 +54,14 @@ bool send(Adafruit_BLE *bt, const char* buf, const char* delim)
 	return bt->waitForOK();
 }
 
+bool send(Adafruit_BLE *bt, const uint8_t* buf, const unsigned int length)
+{
+	bt->print("AT+BLEUARTTX=");
+	bt->write(buf, length);
+	bt->println();
+	return bt->waitForOK();
+}
+
 bool disableConnections(Adafruit_BLE *bt)
 {
 	bt->println("AT+GAPCONNECTABLE=0");
