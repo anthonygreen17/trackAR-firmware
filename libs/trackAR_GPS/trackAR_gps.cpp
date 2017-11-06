@@ -64,7 +64,7 @@ void serializeInto(uint8_t buf[HC12_TRANSMIT_SIZE], bool user_serial_debug)
 
   String latitude = String(tinyGps.location.lat(), 6);
   String longitude = String(tinyGps.location.lng(), 6);
-  String altitude = String(tinyGps.altitude.miles());
+  String altitude = String(tinyGps.altitude.miles(), 6);
     char msg[80];
     sprintf(msg, "%s,%s,%s", 
       latitude.c_str(),

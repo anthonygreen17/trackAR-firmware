@@ -61,8 +61,10 @@ void loop()
   }
   gps::serializeInto(serialized_gps_data, true);
   UserSerial.flush();
+  
 //  deserialize(serialized_gps_data);
 //  UserSerial.flush();
+//  
   hc12::send(serialized_gps_data, HC12_TRANSMIT_SIZE);
   HC12_SERIAL.flush();
   
@@ -75,6 +77,21 @@ void loop()
 //  hc12::enterSleep();
   
   /* hc12::sleep() */
+}
+
+/**
+ * Test function to print out deserialized bytes
+ */
+void printSerializedDataBytes(uint8_t data[12])
+{
+  UserSerial.print("Raw string: [");
+  for (int i = 0; i < HC12_TRANSMIT_SIZE; ++i)
+  {
+    UserSerial.print(data[i]);
+    UserSerial.print(", ");
+  }
+  UserSerial.println("]");
+  UserSerial.flush();
 }
 
 
