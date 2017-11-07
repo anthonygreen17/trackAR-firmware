@@ -14,7 +14,6 @@ static void bluetoothError(const __FlashStringHelper*err) {
 }
 
 void initialize(
-	Adafruit_BLE *bt,
 	void (*onConnect)(void),
 	void (*onDisconnect)(void),
 	void (*onRxBufReceive)(char*, uint16_t))
@@ -38,26 +37,34 @@ void initialize(
 
 	// see Adafruit_BLE.cpp
 	if (onConnect != NULL)
-		bt->setConnectCallback(onConnect);
+		bt_module.setConnectCallback(onConnect);
 	if (onDisconnect != NULL)
-		bt->setDisconnectCallback(onDisconnect);
+		bt_module.setDisconnectCallback(onDisconnect);
 	if (onRxBufReceive != NULL)
-		bt->setBleUartRxCallback(onRxBufReceive);
+		bt_module.setBleUartRxCallback(onRxBufReceive);
 }
 
-bool send(Adafruit_BLE *bt, const char* buf, const char* delim)
+bool send(const char* buf, const char* delim)
 {
 	char msg[strlen(buf) + strlen(delim) + 1];
 	sprintf(msg, "%s%s", buf, delim);
-	bt->print("AT+BLEUARTTX=");
-	bt->println(msg);
-	return bt->waitForOK();
+	bt_module.print("AT+BLEUARTTX=");
+	bt_module.println(msg);
+	return bt_module.waitForOK();
 }
 
-bool disableConnections(Adafruit_BLE *bt)
+bool send(const uint8_t* buf, const unsigned int length)
 {
-	bt->println("AT+GAPCONNECTABLE=0");
-	return bt->waitForOK();
+	bt_module.print("AT+BLEUARTTX=");
+	bt_module.write(buf, length);
+	bt_module.println();
+	return bt_module.waitForOK();
+}
+
+bool disableConnections()
+{
+	bt_module.println("AT+GAPCONNECTABLE=0");
+	return bt_module.waitForOK();
 }
 
 } // bluetooth

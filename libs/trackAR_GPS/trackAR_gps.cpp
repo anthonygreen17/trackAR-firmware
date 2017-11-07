@@ -33,8 +33,8 @@ void formatInto(char* gps_message, bool user_serial_debug)
   String satellites = String(tinyGps.satellites.value());
   String hdop = String(tinyGps.hdop.value());
   
-  sprintf(gps_message, "%s,%s,%s,%s,%s,%s,%s,%s,%s", 
-    latitude.c_str(), 
+  sprintf(gps_message, "%f,%s,%s,%s,%s,%s,%s,%s,%s", 
+    tinyGps.location.lat(), 
     longitude.c_str(), 
     date.c_str(), 
     time.c_str(),
@@ -47,8 +47,30 @@ void formatInto(char* gps_message, bool user_serial_debug)
   if (user_serial_debug)
   {
     UserSerial.print("GPS message..."); UserSerial.println(gps_message);
-    UserSerial.println();
   }
+}
+
+void serializeInto(uint8_t buf[HC12_TRANSMIT_SIZE], bool user_serial_debug)
+{
+  gps_vals_union vals;
+  vals.vals.latitude =  (float)tinyGps.location.lat();
+  vals.vals.longitude = (float)tinyGps.location.lng();
+  vals.vals.altitude =  (float)tinyGps.altitude.miles();
+  memcpy(buf, vals.data_bytes, sizeof(gps_vals_t));
+
+  if (!user_serial_debug)
+    return;
+
+  String latitude = String(tinyGps.location.lat(), 6);
+  String longitude = String(tinyGps.location.lng(), 6);
+  String altitude = String(tinyGps.altitude.miles(), 6);
+    char msg[80];
+    sprintf(msg, "%s,%s,%s", 
+      latitude.c_str(),
+      longitude.c_str(),
+      altitude.c_str()
+    );
+    UserSerial.print("GPS message ||"); UserSerial.println(msg);
 }
 
 /**
