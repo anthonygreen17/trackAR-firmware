@@ -30,7 +30,7 @@ unsigned int btWritePeriod = 1000;  // milliseconds
 void setup()
 {
   UserSerial.begin(115200);
-	bluetooth::initialize(&bt_module);
+	bluetooth::initialize();
   hc12::initialize();
 }
 
@@ -49,10 +49,11 @@ void loop()
   }
 }
 
+/**
+ *  Wrapper so we can print out the deserialized buffer of received data from the Beacon.
+ */
 void sendBtByteWrapper(uint8_t* buf, unsigned int len)
 {
   deserialize(buf);
-  // use to verify that the Beacon send hc12::noPosReceivedMsg until it gets GPS data
-//  UserSerial.println(buf[0]);
-  bluetooth::send(&bt_module, buf, len);
+  bluetooth::send(buf, len);
 }
