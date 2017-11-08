@@ -37,6 +37,7 @@ namespace hc12
 	 */
 	void send(const char* msg);
 	void send(uint8_t* data, unsigned int length);
+	
 	void sleep();
 	void unsleep();
 }

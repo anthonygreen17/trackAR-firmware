@@ -85,14 +85,14 @@ namespace hc12
 	}
 
 	void sleep(){
-	  HC12_SERIAL.write("AT+SLEEP");
-	  HC12_SERIAL.flush();
-	  digitalWrite(SET_PIN, HIGH); 
+		HC12_SERIAL.write("AT+SLEEP");
+		HC12_SERIAL.flush();
+		digitalWrite(SET_PIN, HIGH); 
 	}
 
 	void unsleep(){
-	  digitalWrite(SET_PIN, LOW); 
-	  digitalWrite(SET_PIN, HIGH); 
+		digitalWrite(SET_PIN, LOW); 
+		digitalWrite(SET_PIN, HIGH); 
 	}
 
 	// bool processBytes()

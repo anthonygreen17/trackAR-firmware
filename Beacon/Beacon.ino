@@ -21,7 +21,6 @@ void setup()
     UserSerial.println("GPS properly synced");
   UserSerial.flush();
 }
-
 /**
  *  The call to gps::sync() should return immediately as a transmission is completed. So, when we
  *  call sleepUntilUartRx(), that means we should sleep for almost an entire second, until the 
@@ -40,7 +39,7 @@ void loop()
   setupWdtInterrupt(MS_500);
   sleepPwrDown(BEACON);
   disableWdt();
-  /* hc12::exitSleep(); */
+  hc12::unsleep();
   sleepUntilUartRX(usart_wake, BEACON);
 
   /**
@@ -52,16 +51,32 @@ void loop()
     UserSerial.println("Problem syncing GPS. Resyncing...");
     gps::sync();
   }
+
   gps::formatInto(gps_message);
   hc12::send(gps_message);
   HC12_SERIAL.flush();
-  /* hc12::sleep() */
+
+  //Wait for all bytes to be transmitted
+  delay(10);
+
+  //Set transceiver set pin to low to put into command mode
+  hc12PrepareSleep();
+
+  //Wait for transceiver to enter command mode
+  setupWdtInterrupt(MS_32);
+  sleepPwrDown(BEACON);
+  disableWdt();
+  setupWdtInterrupt(MS_16);
+  sleepPwrDown(BEACON);
+  disableWdt();
+
+  hc12::sleep();  
 }
 
 
 ISR(WDT_vect)
 {
-
+  
 }
 
 
