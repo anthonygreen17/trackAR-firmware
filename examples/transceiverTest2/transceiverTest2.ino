@@ -7,9 +7,6 @@
 
 void setup() {
   Serial.begin(9600);                       // Open serial port to computer
-//  Serial1.begin(9600);                         // Open serial port to HC12
-  //pinMode(A1, OUTPUT);
-  //digitalWrite(A1, HIGH); 
   hc12::initialize();
 } 
 
@@ -24,25 +21,5 @@ void loop() {
       Serial1.write(readVal);
     }
   }  
-}
-
-void transceiverSleep(){
-  digitalWrite(A1, LOW); 
-  delay(40);
-  Serial1.write("AT+SLEEP");
-  Serial1.flush();
-  digitalWrite(A1, HIGH); 
-  //MIGHT need an additonal delay here!!!!
-  Serial.println("Entering Sleep Mode");
-}
-
-void transceiverDefault(){
-  digitalWrite(A1, LOW); 
-  //delay(40);
-  //Serial1.write("AT+DEFAULT");
-  //Serial1.flush();
-  digitalWrite(A1, HIGH); 
-  //MIGHT need an additonal delay here!!!!
-  Serial.println("Exiting Sleep Mode");
 }
 
