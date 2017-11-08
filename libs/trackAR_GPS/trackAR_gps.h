@@ -2,6 +2,7 @@
 #define TRACKAR_GPS_H_
 
 #include "TinyGPS++.h"
+#include "serializer.h"
 
 extern TinyGPSPlus tinyGps;
 
@@ -22,6 +23,8 @@ void boot();
  *  Format the latest received GPS data into the message.
  */
 void formatInto(char* message, bool user_serial_debug = true);
+
+void serializeInto(uint8_t buf[HC12_TRANSMIT_SIZE], bool user_serial_debug = true);
 
 /**
  *  The Tinyshield GPS sends 6 NMEA sentences per transmission. To start off our program, 

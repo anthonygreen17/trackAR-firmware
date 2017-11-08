@@ -3,10 +3,17 @@
 #include "trackAR_gps.h"
 #include "general_config.h"
 #include "trackAR_sleep.h"
+#include "serializer.h"
 #include "avr/wdt.h"
 
 char gps_message[150];
 USART_WAKE_RX usart_wake = SLEEP_UNTIL_USART_2;
+uint8_t serialized_gps_data[HC12_TRANSMIT_SIZE];
+
+/**
+ *  Set this to true for maaaaaad debug printed to UserSerial
+ */
+#define USER_DEBUG true
 
 void setup()
 { 
@@ -32,11 +39,14 @@ void setup()
  *  sleep mode, SLEEP_MODE_PWR_DOWN, which saves a LOT more power than the SLEEP_MODE_IDLE that is needed
  *  to wake up via UART RX. The time between the first RX byte from the GPS and the last TX byte sent 
  *  out to the transceiver has been found to be ~400ms. To be safe, we'll use the WDT to sleep for 
- *  around 500ms before going into SLEEP_MODE_IDLE to let the GPS wake us up.
+ *  around 375ms before going into SLEEP_MODE_IDLE to let the GPS wake us up.
  */
 void loop()
 {
-  setupWdtInterrupt(MS_500);
+  setupWdtInterrupt(MS_250);
+  sleepPwrDown(BEACON);
+  disableWdt();
+  setupWdtInterrupt(MS_125);
   sleepPwrDown(BEACON);
   disableWdt();
   hc12::unsleep();
@@ -44,17 +54,33 @@ void loop()
 
   /**
    * The typical time from this point to the end of the loop was 
-   * found to be ~400ms
+   * found to be ~400ms, when sending a ~60byte string at 9600 baud
    */
-  if (!gps::smartDelay(1500))
+   
+  if (!gps::smartDelay(2000))
   {
     UserSerial.println("Problem syncing GPS. Resyncing...");
     gps::sync();
   }
+  
+  gps::serializeInto(serialized_gps_data, USER_DEBUG);
 
-  gps::formatInto(gps_message);
-  hc12::send(gps_message);
+  if (USER_DEBUG)
+  {
+    UserSerial.flush();
+    printSerializedDataBytes(serialized_gps_data);
+    deserialize(serialized_gps_data);
+    UserSerial.flush();
+  }
+
+  hc12::send(serialized_gps_data, HC12_TRANSMIT_SIZE);
   HC12_SERIAL.flush();
+
+  if (USER_DEBUG)
+  {
+    UserSerial.println("\n");
+    UserSerial.flush();
+  }
 
   //Wait for all bytes to be transmitted
   delay(10);
@@ -73,10 +99,26 @@ void loop()
   hc12::sleep();  
 }
 
+/**
+ * Test function to print out deserialized bytes.
+ */
+void printSerializedDataBytes(uint8_t data[12])
+{
+  UserSerial.print("Raw string: [");
+  for (int i = 0; i < HC12_TRANSMIT_SIZE; ++i)
+  {
+    UserSerial.print(data[i]);
+    UserSerial.print(", ");
+  }
+  UserSerial.println("]");
+  UserSerial.flush();
+}
 
+/**
+ *  We don't actually need this to do anything. We just want to wake up from sleep.
+ */
 ISR(WDT_vect)
 {
-  
 }
 
 

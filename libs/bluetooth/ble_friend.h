@@ -47,7 +47,7 @@ namespace bluetooth
 {
 
 void initialize( 
-  Adafruit_BLE *bt, void (*onConnect)(void) = NULL, void (*onDisconnect)(void) = NULL,
+  void (*onConnect)(void) = NULL, void (*onDisconnect)(void) = NULL,
   void (*onRxBufReceive)(char*, uint16_t) = NULL
 );
 
@@ -55,10 +55,15 @@ void initialize(
  * Send the buffer to the BT module. Return true if the module returns "OK", and return
  * false otherwise.
  */
-bool send(Adafruit_BLE *bt, const char* buf, const char* delim = "");
+bool send(const char* buf, const char* delim = "");
+
+/**
+ *  Send a raw byte array to the bluetooth module.
+ */
+bool send(Adafruit_BLE *bt, const uint8_t* buf, const unsigned int length);
 
 // dont allow the BT module to connect to any other components
-bool disableConnections(Adafruit_BLE *bt);
+bool disableConnections();
 
 } // bluetooth
 

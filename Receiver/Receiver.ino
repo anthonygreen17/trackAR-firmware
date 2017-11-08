@@ -22,6 +22,7 @@
 #include "ble_friend.h"
 #include "general_config.h"
 #include "hc12.h"
+#include "serializer.h"
 
 unsigned long lastBtWriteTime = 0, now = 0;
 unsigned int btWritePeriod = 1000;  // milliseconds
@@ -29,7 +30,7 @@ unsigned int btWritePeriod = 1000;  // milliseconds
 void setup()
 {
   UserSerial.begin(115200);
-	bluetooth::initialize(&bt_module);
+	bluetooth::initialize();
   hc12::initialize();
 }
 
@@ -42,8 +43,17 @@ void loop()
   {
   	if (now - lastBtWriteTime > btWritePeriod)
   	{
-	  	bluetooth::send(&bt_module, hc12::lastRxMsg, "\r\n");
+      hc12::sendRxDataWithFunc(sendBtByteWrapper);
 	  	lastBtWriteTime = millis();
 	  }
   }
+}
+
+/**
+ *  Wrapper so we can print out the deserialized buffer of received data from the Beacon.
+ */
+void sendBtByteWrapper(uint8_t* buf, unsigned int len)
+{
+  deserialize(buf);
+  bluetooth::send(buf, len);
 }
