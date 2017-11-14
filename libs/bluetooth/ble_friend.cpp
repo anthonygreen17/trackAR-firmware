@@ -44,14 +44,14 @@ void initialize(
 		bt_module.setBleUartRxCallback(onRxBufReceive);
 }
 
-bool send(const char* buf, const char* delim)
-{
-	char msg[strlen(buf) + strlen(delim) + 1];
-	sprintf(msg, "%s%s", buf, delim);
-	bt_module.print("AT+BLEUARTTX=");
-	bt_module.println(msg);
-	return bt_module.waitForOK();
-}
+// bool send(const char* buf, const char* delim)
+// {
+// 	char msg[strlen(buf) + strlen(delim) + 1];
+// 	sprintf(msg, "%s%s", buf, delim);
+// 	bt_module.print("AT+BLEUARTTX=");
+// 	bt_module.println(msg);
+// 	return bt_module.waitForOK();
+// }
 
 bool send(const uint8_t* buf, const unsigned int length)
 {
