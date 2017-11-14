@@ -49,8 +49,8 @@ void loop()
   setupWdtInterrupt(MS_125);
   sleepPwrDown(BEACON);
   disableWdt();
-  hc12::unsleep();
   sleepUntilUartRX(usart_wake, BEACON);
+  hc12::unsleep();
 
   /**
    * The typical time from this point to the end of the loop was 
@@ -62,7 +62,7 @@ void loop()
     UserSerial.println("Problem syncing GPS. Resyncing...");
     gps::sync();
   }
-  
+
   gps::serializeInto(serialized_gps_data, USER_DEBUG);
 
   if (USER_DEBUG)
