@@ -54,6 +54,13 @@ namespace hc12
 
 		// initialize the packet interface to do the packet header/checksum/footer stuff for us
 		packet_init(sendPacket, processPacket, PACKET_HANDLER);
+		
+		//initialize pin that puts transceiver into command mode, set it to LOW to put into command mode
+		pinMode(SET_PIN, OUTPUT);
+		
+		//Transceiver is not in command mode at start
+		digitalWrite(SET_PIN, HIGH); 
+
 		receiving = false;
 	}
 
@@ -81,5 +88,16 @@ namespace hc12
 		{
 			packet_process_byte(HC12_SERIAL.read(), PACKET_HANDLER);
 		}
+	}
+
+	void sleep(){
+		HC12_SERIAL.write("AT+SLEEP");
+		HC12_SERIAL.flush();
+		digitalWrite(SET_PIN, HIGH); 
+	}
+
+	void unsleep(){
+		digitalWrite(SET_PIN, LOW); 
+		digitalWrite(SET_PIN, HIGH); 
 	}
 }

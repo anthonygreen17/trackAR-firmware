@@ -6,6 +6,8 @@
 namespace hc12
 {
 	constexpr unsigned int BAUD        = 9600;
+	constexpr unsigned int MAX_MSG_LEN = 512;
+	constexpr unsigned int SET_PIN     = A1;
 	constexpr unsigned int MSG_LEN = sizeof(gps_vals_t);
 
 	/**
@@ -31,6 +33,18 @@ namespace hc12
 	 */
 	void send(const char* msg);
 	void send(uint8_t* data, unsigned int length);
+	
+	/**
+     * (NOTE): This function must be called while the transceiver is in command mode
+	 * Send AT Command ("AT-SLEEP") to put transceiver into Sleep mode, then flush the serial to ensure all
+	 * bytes are sent before setting pin to HIGH, which takes the transceiver out of command mode.
+	 */
+	void sleep();
+	
+	/**
+     * Set pin LOW, then back to HIGH, to take it out of sleep mode
+	 */
+	void unsleep();
 
 	/**
 	 *  Send the transceiver message with the provided function. This allows us an easy way
@@ -42,4 +56,7 @@ namespace hc12
 	void sendRxDataWithFunc( void (*func)(uint8_t*, unsigned int) );
 }
 
+#define hc12PrepareSleep() (digitalWrite(hc12::SET_PIN, LOW))
+
 #endif // HC_12_H_
+
