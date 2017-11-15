@@ -55,12 +55,12 @@ void initialize(
  * Send the buffer to the BT module. Return true if the module returns "OK", and return
  * false otherwise.
  */
-// bool send(const char* buf, const char* delim = "");
+bool send(const char* buf, const char* delim = "\r\n");
 
 /**
  *  Send a raw byte array to the bluetooth module.
  */
-bool send(const uint8_t* buf, const unsigned int length);
+// bool send(const uint8_t* buf, const unsigned int length);
 
 // dont allow the BT module to connect to any other components
 bool disableConnections();

@@ -36,9 +36,6 @@ namespace hc12
 	{
 		UserSerial.print("Received message from Beacon with length ");
 		UserSerial.println(length);
-		deserialize(data);
-		UserSerial.write(data, length);
-		UserSerial.print("\n");
 
 		// copy the received payload into lastRxMsg
 		memcpy((void*)lastRxMsg, data, length);

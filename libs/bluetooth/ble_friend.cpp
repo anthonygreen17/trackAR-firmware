@@ -53,13 +53,13 @@ void initialize(
 // 	return bt_module.waitForOK();
 // }
 
-bool send(const uint8_t* buf, const unsigned int length)
-{
-	bt_module.print("AT+BLEUARTTX=");
-	bt_module.write(buf, length);
-	bt_module.println();
-	return bt_module.waitForOK();
-}
+// bool send(const uint8_t* buf, const unsigned int length)
+// {
+// 	bt_module.print("AT+BLEUARTTX=");
+// 	bt_module.write(buf, length);
+// 	bt_module.println();
+// 	return bt_module.waitForOK();
+// }
 
 bool disableConnections()
 {
