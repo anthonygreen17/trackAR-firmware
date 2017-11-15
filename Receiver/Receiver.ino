@@ -54,6 +54,13 @@ void loop()
  */
 void sendBtByteWrapper(uint8_t* buf, unsigned int len)
 {
-  deserialize(buf);
-  bluetooth::send(buf, len);
+  // send NOPOS if we havent received an actual data point
+  if (len != hc12::MSG_LEN)
+  {
+    bluetooth::send("NOPOS");
+    return;
+  }
+  char str_buf[50];
+  deserializeIntoStr(buf, str_buf);
+  bluetooth::send(str_buf);
 }

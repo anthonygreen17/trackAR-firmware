@@ -49,4 +49,9 @@ typedef union {
 // void deserialize(uint8_t buf[HC12_TRANSMIT_SIZE]);
 void deserialize(uint8_t *buf);
 
+/**
+ *  Deserialize a transceivier byte array into a string representing the values.
+ */
+void deserializeIntoStr(uint8_t *buf, char* dest_str, bool log_to_user = true);
+
 #endif
