@@ -1,6 +1,7 @@
 #include "hc12.h"
 #include "general_config.h"
 #include "serializer.h"
+#include "leds.h"
 
 extern "C" {
 	#include "packet.h"
@@ -40,6 +41,7 @@ namespace hc12
 		// copy the received payload into lastRxMsg
 		memcpy((void*)lastRxMsg, data, length);
 		receiving = true;
+		leds::setFlag(HC12_RECEIVING_FLAG);
 	}
 
 	void initialize()

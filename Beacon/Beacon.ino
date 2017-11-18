@@ -6,6 +6,12 @@
 #include "serializer.h"
 #include "avr/wdt.h"
 
+/**
+ *  The indicator LEDs care about what device we are
+ */
+#define IS_BEACON 1
+#include "leds.h"
+
 char gps_message[150];
 USART_WAKE_RX usart_wake = SLEEP_UNTIL_USART_2;
 uint8_t serialized_gps_data[HC12_TRANSMIT_SIZE];
@@ -30,6 +36,7 @@ void setup()
   else
     UserSerial.println("GPS properly synced");
   UserSerial.flush();
+  leds::initialize(BEACON);
 }
 /**
  *  The call to gps::sync() should return immediately as a transmission is completed. So, when we
@@ -52,19 +59,24 @@ void loop()
    * The typical time from this point to the end of the loop was 
    * found to be ~400ms, when sending a ~60byte string at 9600 baud
    */
-   
   if (!gps::smartDelay(2000))
   {
     UserSerial.println("Problem syncing GPS. Resyncing...");
     gps::sync();
   }
 
+  // turn off all indicator LEDs
+  leds::off(BEACON);
+
   if (gps::hasAcquiredSignal())
   {
+    leds::setFlag(RECEIVING_GPS_DATA_FLAG);
     handleTransmission();
   }
   else
   {
+    leds::unsetFlag(RECEIVING_GPS_DATA_FLAG);
+
     // go into a deep sleep for a while, before letting the next GPS data transaction wake us
     // up on the UART RX
     setupWdtInterrupt(MS_500);
@@ -77,6 +89,9 @@ void loop()
     sleepPwrDown(BEACON);
     disableWdt();
   } 
+
+  // enable indicator LEDs here...they should light up for about 200ms or so
+  leds::on(BEACON);
 }
 
 static void handleTransmission()

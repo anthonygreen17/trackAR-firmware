@@ -1,26 +1,34 @@
-#ifndef LEDS_H_
-#define LEDS_H_
+/**
+ *  Note: This file depends on you defining either the symbol IS_BEACON or the symbol
+ *  IS_RECEIVER, BEFORE you include this file.
+ */
 
-// TODO - make these actual pins
-#define BT_CONNECTED_PIN   13
-#define GPS_INDICATOR_PIN  13
-#define BT_SEARCHING_PIN   13
+#ifndef TRACKAR_LEDS_H_
+#define TRACKAR_LEDS_H_
+#include <Arduino.h>
+#include "general_config.h"
 
 /**
  * Use this flag along with the enum to decide which LEDs to flash.
  */
-typedef enum indicator : uint8_t {
-
+typedef enum INDICATOR : uint8_t {
 	BT_CONNECTED_FLAG = 1,
 	RECEIVING_GPS_DATA_FLAG = 2,
 	BT_SEARCHING_FLAG = 3,
+	HC12_RECEIVING_FLAG = 4,
 } indicator_t;
 
-volatile extern uint8_t led_indicator_flag;
+namespace leds
+{
 
-void indicatorLedsOff();
-void indicatorLedsOn();
-void setIndicatorFlag(indicator_t flag);
-void unsetIndicatorFlag(indicator_t flag);
+volatile extern uint8_t indicator_flag;
+
+void initialize(TrackARDevice dev);
+void off(TrackARDevice dev);
+void on(TrackARDevice dev);
+void setFlag(indicator_t flag);
+void unsetFlag(indicator_t flag);
 
 #endif
+
+} // leds

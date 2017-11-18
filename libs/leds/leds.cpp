@@ -1,35 +1,85 @@
 #include "leds.h"
 
-volatile uint8_t led_indicator_flag = 0;
 
-void indicatorLedsOff()
+
+namespace leds
 {
-	digitalWrite(BT_CONNECTED_PIN,  0);
-	digitalWrite(GPS_INDICATOR_PIN, 0);
-	digitalWrite(BT_SEARCHING_PIN,  0);
+
+volatile uint8_t indicator_flag = 0;
+static bool active = false;
+
+/**
+ *  These pins are silkscreen labeled as such
+ */
+static const unsigned long GPS_INDICATOR_PIN  = A10;
+static const unsigned long BT_CONNECTED_PIN   = A10;
+static const unsigned long BT_SEARCHING_PIN   = A12;
+static const unsigned long HC12_RECEIVING_PIN = A14;
+
+void initialize(TrackARDevice dev)
+{
+	switch (dev)
+	{
+		case BEACON:
+			pinMode(GPS_INDICATOR_PIN,  OUTPUT);
+			break;
+
+		case RECEIVER:
+			pinMode(BT_CONNECTED_PIN,    OUTPUT);
+			pinMode(BT_SEARCHING_PIN,    OUTPUT);
+			pinMode(HC12_RECEIVING_PIN,  OUTPUT);
+			break;
+	}
 }
 
-void indicatorLedsOn()
+void off(TrackARDevice dev)
 {
-	if (led_indicator_flag & (1 << BT_CONNECTED_FLAG) )
+	if (!active)
+		return;
+
+	switch (dev)
 	{
-		digitalWrite(BT_CONNECTED_PIN,  1);
+		case BEACON:
+			digitalWrite(GPS_INDICATOR_PIN,  0);
+			break;
+
+		case RECEIVER:
+			digitalWrite(BT_CONNECTED_PIN,   0);
+			digitalWrite(BT_SEARCHING_PIN,   0);
+			digitalWrite(HC12_RECEIVING_PIN, 0);
+			break;
 	}
-	if (led_indicator_flag & (1 << RECEIVING_GPS_DATA_FLAG) )
-	{
-		digitalWrite(GPS_INDICATOR_PIN, 1);
-	}
-	if (led_indicator_flag & (1 << BT_SEARCHING_FLAG) )
-	{
-		digitalWrite(BT_SEARCHING_PIN,  1);
-	}
-}
-void setIndicatorFlag(indicator_t flag)
-{
-	led_indicator_flag |= (1 << flag);
+	active = false;
 }
 
-void unsetIndicatorFlag(indicator_t flag)
+void on(TrackARDevice dev)
 {
-	led_indicator_flag &= ~(1 << flag);
+	if (active)
+		return;
+	uint8_t f = indicator_flag;
+
+	switch (dev)
+	{
+		case BEACON:
+			digitalWrite(GPS_INDICATOR_PIN,  f & (1 << RECEIVING_GPS_DATA_FLAG));
+			break;
+
+		case RECEIVER:
+			digitalWrite(BT_CONNECTED_PIN,   f & (1 << BT_CONNECTED_FLAG));
+			digitalWrite(HC12_RECEIVING_PIN, f & (1 << HC12_RECEIVING_FLAG));
+			digitalWrite(BT_SEARCHING_PIN,   f & (1 << BT_SEARCHING_FLAG));
+			break;
+	}
+	active = true;
 }
+void setFlag(indicator_t flag)
+{
+	indicator_flag |= (1 << flag);
+}
+
+void unsetFlag(indicator_t flag)
+{
+	indicator_flag &= ~(1 << flag);
+}
+
+} //leds
