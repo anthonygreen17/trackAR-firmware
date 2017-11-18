@@ -50,6 +50,13 @@ void formatInto(char* gps_message, bool user_serial_debug)
   }
 }
 
+bool hasAcquiredSignal()
+{
+  return !((int)tinyGps.location.lat() == 0
+    && (int)tinyGps.location.lng() == 0
+    && (int)tinyGps.altitude.miles() == 0);
+}
+
 void serializeInto(uint8_t buf[HC12_TRANSMIT_SIZE], bool user_serial_debug)
 {
   gps_vals_union vals;
