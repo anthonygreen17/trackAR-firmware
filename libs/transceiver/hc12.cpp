@@ -11,8 +11,9 @@ extern "C" {
 namespace hc12
 {
 	static volatile uint8_t lastRxMsg[MSG_LEN]; 
-	static volatile bool receiving = false;
+	static volatile bool startedReceiving = false;
 	static const int PACKET_HANDLER = 0;
+	static unsigned long lastRxTime;
 
 	// various private functions
 	static void sendPacket(uint8_t *data, unsigned int length);
@@ -40,7 +41,8 @@ namespace hc12
 
 		// copy the received payload into lastRxMsg
 		memcpy((void*)lastRxMsg, data, length);
-		receiving = true;
+		startedReceiving = true;
+		lastRxTime = millis();
 		leds::setFlag(HC12_RECEIVING_FLAG);
 	}
 
@@ -60,7 +62,7 @@ namespace hc12
 		//Transceiver is not in command mode at start
 		digitalWrite(SET_PIN, HIGH); 
 
-		receiving = false;
+		startedReceiving = false;
 	}
 
 	void send(const char* msg)
@@ -75,7 +77,7 @@ namespace hc12
 
 	void sendRxDataWithFunc( void (*func)(uint8_t*, unsigned int) )
 	{
-		if (receiving)
+		if (startedReceiving)
 			func(lastRxMsg, MSG_LEN);
 		else
 			func(&noPosReceivedMsg, 1);
@@ -86,6 +88,10 @@ namespace hc12
 		while (HC12_SERIAL.available() > 0)
 		{
 			packet_process_byte(HC12_SERIAL.read(), PACKET_HANDLER);
+		}
+		if (millis() - lastRxTime >= MSG_TIMEOUT_MS)
+		{
+			leds::unsetFlag(HC12_RECEIVING_FLAG);
 		}
 	}
 

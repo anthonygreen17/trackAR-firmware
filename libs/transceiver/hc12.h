@@ -11,6 +11,11 @@ namespace hc12
 	constexpr unsigned int MSG_LEN = sizeof(gps_vals_t);
 
 	/**
+	 *  After this amount of time, assume that we stopped receiving messages.
+	 */
+	constexpr unsigned int MSG_TIMEOUT_MS = 3000;
+
+	/**
 	 * Send this over bluetooth if we connect and havent received any transceiver data yet.
 	 */
 	constexpr const uint8_t noPosReceivedMsg = 14;
