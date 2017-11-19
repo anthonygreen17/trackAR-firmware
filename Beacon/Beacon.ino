@@ -82,16 +82,11 @@ void loop()
     setupWdtInterrupt(MS_500);
     sleepPwrDown(BEACON);
     disableWdt();
-    setupWdtInterrupt(MS_250);
+    setupWdtInterrupt(MS_32);
     sleepPwrDown(BEACON);
     disableWdt();
-    setupWdtInterrupt(MS_125);
-    sleepPwrDown(BEACON);
-    disableWdt();
+    leds::on(BEACON);
   } 
-
-  // enable indicator LEDs here...they should light up for about 200ms or so
-  leds::on(BEACON);
 }
 
 static void handleTransmission()
@@ -136,13 +131,16 @@ static void handleTransmission()
   setupWdtInterrupt(MS_250);
   sleepPwrDown(BEACON);
   disableWdt();
-  setupWdtInterrupt(MS_125);
+  setupWdtInterrupt(MS_64);
   sleepPwrDown(BEACON);
   disableWdt();
 
   //...then wake it up, allowing for some initialization time before we actully
   // try to send data
   hc12::unsleep();
+
+  // as a last step, turn the indicator LEDs on
+  leds::on(BEACON);
 }
 
 /**

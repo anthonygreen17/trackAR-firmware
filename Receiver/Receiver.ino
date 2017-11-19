@@ -32,7 +32,7 @@
 
 unsigned long lastBtWriteTime = 0, lastLedOnTime = 0, lastLedOffTime = 0, now = 0;
 const unsigned int btWritePeriod = 1000, ledPeriod = 1000;  // milliseconds
-const unsigned int ledOffTime = 200;
+const unsigned int ledOffTime = 750;
 const unsigned int ledOnTime = ledPeriod - ledOffTime;
 
 void setup()
@@ -57,7 +57,15 @@ void loop()
 	  	lastBtWriteTime = millis();
 	  }
   }
+  else
+  {
+    leds::unsetFlag(BT_CONNECTED_FLAG);
+  }
+  handleLeds(now);
+}
 
+static void handleLeds(unsigned long now)
+{
   if (now - lastLedOnTime >= ledPeriod)
   {
     leds::on(RECEIVER);
@@ -67,12 +75,13 @@ void loop()
   {
     leds::off(RECEIVER);
   }
+
 }
 
 /**
  *  Wrapper so we can print out the deserialized buffer of received data from the Beacon.
  */
-void sendBtByteWrapper(uint8_t* buf, unsigned int len)
+static void sendBtByteWrapper(uint8_t* buf, unsigned int len)
 {
   // send NOPOS if we havent received an actual data point
   if (len != hc12::MSG_LEN)
