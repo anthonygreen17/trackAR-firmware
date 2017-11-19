@@ -24,14 +24,23 @@
 #include "hc12.h"
 #include "serializer.h"
 
-unsigned long lastBtWriteTime = 0, now = 0;
-unsigned int btWritePeriod = 1000;  // milliseconds
+/**
+ *  The indicator LEDs care about what device we are
+ */
+#define IS_RECEIVER 1
+#include "leds.h"
+
+unsigned long lastBtWriteTime = 0, lastLedOnTime = 0, lastLedOffTime = 0, now = 0;
+const unsigned int btWritePeriod = 1000, ledPeriod = 1000;  // milliseconds
+const unsigned int ledOffTime = 750;
+const unsigned int ledOnTime = ledPeriod - ledOffTime;
 
 void setup()
 {
   UserSerial.begin(115200);
 	bluetooth::initialize();
   hc12::initialize();
+  leds::initialize(RECEIVER);
 }
 
 void loop()
@@ -41,18 +50,38 @@ void loop()
 
   if (bt_module.isConnected())
   {
-  	if (now - lastBtWriteTime > btWritePeriod)
+    leds::setFlag(BT_CONNECTED_FLAG);
+  	if (now - lastBtWriteTime >= btWritePeriod)
   	{
       hc12::sendRxDataWithFunc(sendBtByteWrapper);
 	  	lastBtWriteTime = millis();
 	  }
   }
+  else
+  {
+    leds::unsetFlag(BT_CONNECTED_FLAG);
+  }
+  handleLeds(now);
+}
+
+static void handleLeds(unsigned long now)
+{
+  if (now - lastLedOnTime >= ledPeriod)
+  {
+    leds::on(RECEIVER);
+    lastLedOnTime = millis();
+  }
+  else if (now - lastLedOnTime >= ledOnTime)
+  {
+    leds::off(RECEIVER);
+  }
+
 }
 
 /**
  *  Wrapper so we can print out the deserialized buffer of received data from the Beacon.
  */
-void sendBtByteWrapper(uint8_t* buf, unsigned int len)
+static void sendBtByteWrapper(uint8_t* buf, unsigned int len)
 {
   // send NOPOS if we havent received an actual data point
   if (len != hc12::MSG_LEN)

@@ -6,9 +6,18 @@
 #include "serializer.h"
 #include "avr/wdt.h"
 
+/**
+ *  The indicator LEDs care about what device we are
+ */
+#define IS_BEACON 1
+#include "leds.h"
+
 char gps_message[150];
 USART_WAKE_RX usart_wake = SLEEP_UNTIL_USART_2;
 uint8_t serialized_gps_data[HC12_TRANSMIT_SIZE];
+
+static void handleTransmission();
+static void printSerializedDataBytes(uint8_t data[HC12_TRANSMIT_SIZE]);
 
 /**
  *  Set this to true for maaaaaad debug printed to UserSerial
@@ -27,6 +36,7 @@ void setup()
   else
     UserSerial.println("GPS properly synced");
   UserSerial.flush();
+  leds::initialize(BEACON);
 }
 /**
  *  The call to gps::sync() should return immediately as a transmission is completed. So, when we
@@ -43,26 +53,44 @@ void setup()
  */
 void loop()
 {
-  setupWdtInterrupt(MS_250);
-  sleepPwrDown(BEACON);
-  disableWdt();
-  setupWdtInterrupt(MS_125);
-  sleepPwrDown(BEACON);
-  disableWdt();
-  hc12::unsleep();
   sleepUntilUartRX(usart_wake, BEACON);
 
   /**
    * The typical time from this point to the end of the loop was 
    * found to be ~400ms, when sending a ~60byte string at 9600 baud
    */
-   
   if (!gps::smartDelay(2000))
   {
     UserSerial.println("Problem syncing GPS. Resyncing...");
     gps::sync();
   }
-  
+
+  // turn off all indicator LEDs
+  leds::off(BEACON);
+
+  if (gps::hasAcquiredSignal())
+  {
+    leds::setFlag(RECEIVING_GPS_DATA_FLAG);
+    handleTransmission();
+  }
+  else
+  {
+    leds::unsetFlag(RECEIVING_GPS_DATA_FLAG);
+
+    // go into a deep sleep for a while, before letting the next GPS data transaction wake us
+    // up on the UART RX
+    setupWdtInterrupt(MS_500);
+    sleepPwrDown(BEACON);
+    disableWdt();
+    setupWdtInterrupt(MS_32);
+    sleepPwrDown(BEACON);
+    disableWdt();
+    leds::on(BEACON);
+  } 
+}
+
+static void handleTransmission()
+{
   gps::serializeInto(serialized_gps_data, USER_DEBUG);
 
   if (USER_DEBUG)
@@ -82,13 +110,13 @@ void loop()
     UserSerial.flush();
   }
 
-  //Wait for all bytes to be transmitted
+  //Wait for all bytes to be transmitted through the antenna
   delay(10);
 
   //Set transceiver set pin to low to put into command mode
   hc12PrepareSleep();
 
-  //Wait for transceiver to enter command mode
+  //Wait for transceiver to enter command mode - takes about 40ms
   setupWdtInterrupt(MS_32);
   sleepPwrDown(BEACON);
   disableWdt();
@@ -96,13 +124,29 @@ void loop()
   sleepPwrDown(BEACON);
   disableWdt();
 
-  hc12::sleep();  
+  // put the device into a low power state
+  hc12::sleep();
+
+  // let the hc12 sleep for a little while...
+  setupWdtInterrupt(MS_250);
+  sleepPwrDown(BEACON);
+  disableWdt();
+  setupWdtInterrupt(MS_64);
+  sleepPwrDown(BEACON);
+  disableWdt();
+
+  //...then wake it up, allowing for some initialization time before we actully
+  // try to send data
+  hc12::unsleep();
+
+  // as a last step, turn the indicator LEDs on
+  leds::on(BEACON);
 }
 
 /**
  * Test function to print out deserialized bytes.
  */
-void printSerializedDataBytes(uint8_t data[12])
+static void printSerializedDataBytes(uint8_t data[HC12_TRANSMIT_SIZE])
 {
   UserSerial.print("Raw string: [");
   for (int i = 0; i < HC12_TRANSMIT_SIZE; ++i)

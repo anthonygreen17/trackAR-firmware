@@ -45,6 +45,11 @@ bool sync(unsigned int max_wait_ms = 5000);
  */
 bool smartDelay(unsigned int ms);
 
+/**
+ *  Have we started receiving position data from a satellite yet?
+ */
+bool hasAcquiredSignal();
+
 } //gps
 
 #endif

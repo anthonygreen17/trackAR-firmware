@@ -10,7 +10,7 @@ LowPowerLib=Low-Power
 
 # these are the directories within the trackAR-firmware repo that we'd like to use in Arduino IDE compilation
 declare -a LIB_DIRS=( $LowPowerLib libs/trackAR_Interrupts libs/bluetooth libs/trackAR_Config libs/packet 
-	libs/transceiver libs/TinyGPSPlus-0.95 Adafruit_BluefruitLE_nRF51 libs/trackAR_GPS libs/sleep)
+	libs/transceiver libs/TinyGPSPlus-0.95 Adafruit_BluefruitLE_nRF51 libs/trackAR_GPS libs/sleep libs/leds)
 
 if [ ! -d $LowPowerLib ]; then
 	logError "Run this from the base of the trackAR-firmware repo, please and thank u"
