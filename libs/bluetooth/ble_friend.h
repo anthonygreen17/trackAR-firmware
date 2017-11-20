@@ -55,7 +55,7 @@ void initialize(
  * Send the buffer to the BT module. Return true if the module returns "OK", and return
  * false otherwise.
  */
-bool send(const char* buf, const char* delim = "\r\n");
+bool send(const char* buf, const char* delim = "\\r\\n");
 
 /**
  *  Send a raw byte array to the bluetooth module.
