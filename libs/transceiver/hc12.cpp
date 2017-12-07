@@ -70,9 +70,22 @@ namespace hc12
 		send((uint8_t *)msg, strlen(msg));
 	}
 
+	/**
+	 *  The packet interface will call this function with our data wrapped in 
+	 *  start byte, payload length, CRC, and end byte.
+	 */
+	static void sendPacket(uint8_t *data, unsigned int length)
+	{
+		HC12_SERIAL.write(data, length);
+	}
+
 	void send(uint8_t *data, unsigned int length)
 	{
+		// uncomment this line to use packet interface...
 		packet_send_packet(data, length, PACKET_HANDLER);
+
+		// ...or, uncomment this line to send the raw GPS data to transceiver
+		// sendPacket(data, length);
 	}
 
 	void sendRxDataWithFunc( void (*func)(uint8_t*, unsigned int) )
