@@ -20,13 +20,13 @@ namespace hc12
 	static void processPacket(uint8_t *data, unsigned int length);
 	static void copyMsgFromBuf();
 
-	/**
-	 * This will get called after the packet interface properly packages a data buffer for us.
-	 */
-	static void sendPacket(uint8_t *data, unsigned int length)
-	{
-		HC12_SERIAL.write(data, length);
-	}
+	// /**
+	//  * This will get called after the packet interface properly packages a data buffer for us.
+	//  */
+	// static void sendPacket(uint8_t *data, unsigned int length)
+	// {
+	// 	HC12_SERIAL.write(data, length);
+	// }
 
 	/**
 	 *  This gets called after repeatedly calling packet_process_byte() until a full message
@@ -57,10 +57,20 @@ namespace hc12
 		packet_init(sendPacket, processPacket, PACKET_HANDLER);
 		
 		//initialize pin that puts transceiver into command mode, set it to LOW to put into command mode
-		pinMode(SET_PIN, OUTPUT);
+		// pinMode(SET_PIN, OUTPUT);
 		
 		//Transceiver is not in command mode at start
-		digitalWrite(SET_PIN, HIGH); 
+		// digitalWrite(SET_PIN, HIGH); 
+
+		// send("+++");
+		// while HC12_SERIAL.available() 
+		// 	UserSerial.print((char)HC12_SERIAL.read());
+		// send("AT+SM 1");
+		// while HC12_SERIAL.available() 
+		// 	UserSerial.print((char)HC12_SERIAL.read());
+		// send("AT+ATCN");
+		// while HC12_SERIAL.available() 
+		// 	UserSerial.print((char)HC12_SERIAL.read());
 
 		startedReceiving = false;
 	}

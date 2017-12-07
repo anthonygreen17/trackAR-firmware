@@ -78,6 +78,16 @@ void setupWdtInterrupt(WDT_SLEEP_LENGTH length)
   wdt_reset();
 }
 
+void sleepIdle(TrackARDevice dev)
+{
+	set_sleep_mode(SLEEP_MODE_IDLE);
+	sleep_mode();
+
+	sleep_disable();
+	power_all_enable();
+	disableUnneededPeriphs(dev);
+}
+
 
 void sleepPwrDown(TrackARDevice dev)
 {

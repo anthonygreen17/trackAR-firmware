@@ -10,6 +10,9 @@ namespace hc12
 	constexpr unsigned int SET_PIN     = A1;
 	constexpr unsigned int MSG_LEN = sizeof(gps_vals_t);
 
+	// use this to put the Xbee to sleep.
+	constexpr unsigned int SLEEP_PIN = A4;
+
 	/**
 	 *  After this amount of time, assume that we stopped receiving messages.
 	 */

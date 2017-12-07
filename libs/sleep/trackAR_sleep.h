@@ -37,6 +37,8 @@ void sleepUntilUartRX(USART_WAKE_RX usart_wake, TrackARDevice dev);
  */
 void sleepPwrDown(TrackARDevice dev);
 
+void sleepIdle(TrackARDevice dev);
+
 /**
  *  Set up the watchdog timer to interrupt in the desired amount of time. Make sure to define an
  *  ISR(WDT_vect) function to handle the interrupt.
